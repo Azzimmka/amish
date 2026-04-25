@@ -80,7 +80,7 @@ export default function QualitySection() {
 
   return (
     <section
-      id="gallery"
+
       className="py-20 sm:py-28 bg-cream"
       aria-label="Quality and Gallery"
     >
@@ -134,7 +134,7 @@ export default function QualitySection() {
           transition={{ duration: 0.7 }}
         >
           {/* Section header */}
-          <div className="text-center mb-10">
+          <div className="text-center mb-10" id="gallery">
             <span className="inline-block text-copper text-sm font-bold tracking-widest uppercase mb-3">
               Real Projects
             </span>

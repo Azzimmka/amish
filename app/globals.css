@@ -47,6 +47,14 @@
 /* ── Base Styles ── */
 html {
   scroll-behavior: smooth;
+  /* Offset for fixed header: h-20 (80px) mobile, lg:h-28 (112px) desktop */
+  scroll-padding-top: 80px;
+}
+
+@media (min-width: 1024px) {
+  html {
+    scroll-padding-top: 112px;
+  }
 }
 
 body {
