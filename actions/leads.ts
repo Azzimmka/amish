@@ -1,6 +1,11 @@
 "use server";
 
 import { z } from "zod";
+import { Resend } from "resend";
+import { render } from "@react-email/components";
+import { QuoteTemplate } from "@/emails/quote-template";
+
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 const quoteSchema = z.object({
   fullName: z
@@ -9,8 +14,8 @@ const quoteSchema = z.object({
     .max(100, "Name is too long"),
   phone: z
     .string()
-    .min(10, "Please enter a valid phone number")
-    .max(20, "Phone number is too long"),
+    .min(7, "Please enter a valid phone number")
+    .max(30, "Phone number is too long"),
   email: z
     .string()
     .email("Please enter a valid email address"),
@@ -18,7 +23,7 @@ const quoteSchema = z.object({
     .string()
     .min(2, "Please enter your project location")
     .max(200, "Location is too long"),
-  selectedGarageId: z.string().optional(),
+  selectedGarageId: z.string().nullish(),
 });
 
 export type QuoteFormState = {
@@ -32,11 +37,11 @@ export async function submitQuote(
   formData: FormData
 ): Promise<QuoteFormState> {
   const rawData = {
-    fullName: formData.get("fullName") as string,
-    phone: formData.get("phone") as string,
-    email: formData.get("email") as string,
-    projectLocation: formData.get("projectLocation") as string,
-    selectedGarageId: formData.get("selectedGarageId") as string | undefined,
+    fullName: formData.get("fullName") || "",
+    phone: formData.get("phone") || "",
+    email: formData.get("email") || "",
+    projectLocation: formData.get("projectLocation") || "",
+    selectedGarageId: formData.get("selectedGarageId"),
   };
 
   const validated = quoteSchema.safeParse(rawData);
@@ -49,12 +54,35 @@ export async function submitQuote(
     };
   }
 
-  // TODO: Integrate Resend email here
-  // For now, log the data
-  console.log("📧 New quote submission:", validated.data);
+  try {
+    const emailHtml = await render(QuoteTemplate({
+      ...validated.data,
+      selectedGarageId: validated.data.selectedGarageId ?? undefined,
+    }));
+    
+    const { data, error } = await resend.emails.send({
+      from: "Amish Built Garages <onboarding@resend.dev>",
+      to: ["azimbek_gulyamov@student.itpu.uz"],
+      subject: `New Garage Quote Request: ${validated.data.fullName}`,
+      html: emailHtml,
+    });
 
-  // Simulate a small delay
-  await new Promise((resolve) => setTimeout(resolve, 500));
+    if (error) {
+      console.error("Resend API Error details:", error);
+      return {
+        success: false,
+        message: `Delivery failed: ${error.message || "Unknown API error"}`,
+      };
+    }
+    
+    console.log("Email sent successfully! ID:", data?.id);
+  } catch (err) {
+    console.error("Failed to render/send email:", err);
+    return {
+      success: false,
+      message: "Something went wrong sending the email. Please try again or call us directly.",
+    };
+  }
 
   return {
     success: true,
