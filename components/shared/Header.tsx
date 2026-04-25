@@ -28,7 +28,7 @@ export default function Header() {
   return (
     <header
       className={cn(
-        "fixed top-0 left-0 right-0 z-50 transition-all duration-700",
+        "fixed top-0 left-0 right-0 py-2 z-50 transition-all duration-700",
         scrolled
           ? "bg-forest/95 backdrop-blur-lg shadow-lg shadow-black/20"
           : "bg-transparent"
@@ -55,8 +55,8 @@ export default function Header() {
               className={cn(
                 "relative transition-all duration-500",
                 scrolled
-                  ? "h-10 w-16 sm:h-14 sm:w-44"
-                  : "h-14 w-20 sm:h-20 sm:w-56"
+                  ? "h-14 w-20 sm:h-34 sm:w-44"
+                  : "h-14 w-20 sm:h-30 sm:w-56"
               )}
             >
               <Image

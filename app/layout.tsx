@@ -24,6 +24,9 @@ export const metadata: Metadata = {
   authors: [{ name: siteConfig.name }],
   creator: siteConfig.name,
   metadataBase: new URL(siteConfig.url),
+  icons: {
+    icon: "/logo.svg",
+  },
   openGraph: {
     type: "website",
     locale: "en_US",
@@ -31,20 +34,11 @@ export const metadata: Metadata = {
     title: `${siteConfig.name} | Built by Hand. Built to Last.`,
     description: siteConfig.description,
     siteName: siteConfig.name,
-    images: [
-      {
-        url: "/og-image.png",
-        width: 1200,
-        height: 630,
-        alt: `${siteConfig.name} - Premium Amish-Crafted Garages`,
-      },
-    ],
   },
   twitter: {
     card: "summary_large_image",
     title: siteConfig.name,
     description: siteConfig.description,
-    images: ["/og-image.png"],
   },
   robots: {
     index: true,
