@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { Phone, Mail, MapPin } from "lucide-react";
 import { siteConfig } from "@/config/site";
 
@@ -11,13 +12,13 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-10 py-16">
           {/* Brand */}
           <div className="space-y-4">
-            <div className="flex flex-col leading-none">
-              <span className="text-2xl font-extrabold tracking-wider text-cream">
-                AMISH BUILT
-              </span>
-              <span className="text-xs font-semibold tracking-[0.35em] text-copper uppercase">
-                ★ G A R A G E S ★
-              </span>
+            <div className="relative h-20 w-72 -ml-3">
+              <Image
+                src="/logo.svg"
+                alt="Amish Built Garages"
+                fill
+                className="object-contain brightness-[1.1]"
+              />
             </div>
             <p className="text-sm leading-relaxed text-cream/60 max-w-xs">
               Premium Amish craftsmanship. Every garage is hand-built with

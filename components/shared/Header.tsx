@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { Phone, Menu, X } from "lucide-react";
 import { siteConfig } from "@/config/site";
@@ -33,26 +34,20 @@ export default function Header() {
       )}
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex h-20 items-center justify-between">
+        <div className="flex h-20 lg:h-28 items-center justify-between transition-all duration-500">
           {/* ── Logo ── */}
-          <a href="#" className="flex items-center gap-1 group" aria-label="Home">
-            <div className="flex flex-col leading-none">
-              <span
+          <a href="#" className="flex items-center group" aria-label="Home">
+            <div className="relative h-14 w-20 md:w-[180px] sm:h-20 sm:w-80 transition-all duration-500">
+              <Image
+                src="/logo.svg"
+                alt="Amish Built Garages"
+                fill
                 className={cn(
-                  "text-xl sm:text-2xl font-extrabold tracking-wider transition-colors duration-500",
-                  scrolled ? "text-cream" : "text-white"
+                  "object-contain transition-all duration-500",
+                  !scrolled && "brightness-[1.1] drop-shadow-md"
                 )}
-              >
-                AMISH BUILT
-              </span>
-              <span
-                className={cn(
-                  "text-[0.65rem] sm:text-xs font-semibold tracking-[0.35em] uppercase transition-colors duration-500",
-                  scrolled ? "text-copper" : "text-copper"
-                )}
-              >
-                ★ G A R A G E S ★
-              </span>
+                priority
+              />
             </div>
           </a>
 
@@ -63,7 +58,7 @@ export default function Header() {
                 key={link.href}
                 href={link.href}
                 className={cn(
-                  "text-sm font-medium tracking-wide transition-colors duration-300 hover:text-copper",
+                  "text-[18px] font-medium tracking-wide transition-colors duration-300 hover:text-copper",
                   scrolled ? "text-cream/80" : "text-white/80"
                 )}
               >
