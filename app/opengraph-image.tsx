@@ -7,10 +7,6 @@ export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
 
 export default async function Image() {
-  // Read local SVG
-  const logoData = readFileSync(join(process.cwd(), 'public/icon-square.svg'));
-  // Convert to base64 so next/og (Satori) can render it natively
-  const logoBase64 = `data:image/svg+xml;base64,${logoData.toString('base64')}`;
 
   return new ImageResponse(
     (
@@ -26,7 +22,14 @@ export default async function Image() {
           padding: '40px',
         }}
       >
-        <img src={logoBase64} width="200" height="200" style={{ marginBottom: '40px' }} />
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" style={{ width: 200, height: 200, marginBottom: 40, display: 'flex' }}>
+          <rect width="512" height="512" rx="112" fill="#1A2E1A" />
+          <path d="M110 260 L256 110 L402 260" fill="none" stroke="#B87333" strokeWidth="56" strokeLinecap="round" strokeLinejoin="round" />
+          <path d="M160 220 L160 410" fill="none" stroke="#B87333" strokeWidth="56" strokeLinecap="round" strokeLinejoin="round" />
+          <path d="M352 220 L352 410" fill="none" stroke="#B87333" strokeWidth="56" strokeLinecap="round" strokeLinejoin="round" />
+          <path d="M160 320 L352 320" fill="none" stroke="#B87333" strokeWidth="48" strokeLinecap="round" strokeLinejoin="round" />
+          <circle cx="256" cy="220" r="28" fill="#FCFAF7" />
+        </svg>
         <h1 style={{ fontSize: '64px', fontWeight: 'bold', color: '#FCFAF7', margin: 0, marginBottom: '20px', textAlign: 'center', letterSpacing: '-0.05em' }}>
           Premium Amish Garages
         </h1>
