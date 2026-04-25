@@ -25,7 +25,7 @@ export const metadata: Metadata = {
   creator: siteConfig.name,
   metadataBase: new URL(siteConfig.url),
   icons: {
-    icon: "/logo.svg",
+    icon: "/icon-square.svg",
   },
   openGraph: {
     type: "website",

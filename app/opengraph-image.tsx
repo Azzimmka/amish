@@ -8,7 +8,7 @@ export const contentType = 'image/png';
 
 export default async function Image() {
   // Read local SVG
-  const logoData = readFileSync(join(process.cwd(), 'public/logo.svg'));
+  const logoData = readFileSync(join(process.cwd(), 'public/icon-square.svg'));
   // Convert to base64 so next/og (Satori) can render it natively
   const logoBase64 = `data:image/svg+xml;base64,${logoData.toString('base64')}`;
 
@@ -26,7 +26,7 @@ export default async function Image() {
           padding: '40px',
         }}
       >
-        <img src={logoBase64} width="400" height="266" style={{ marginBottom: '40px' }} />
+        <img src={logoBase64} width="200" height="200" style={{ marginBottom: '40px' }} />
         <h1 style={{ fontSize: '64px', fontWeight: 'bold', color: '#FCFAF7', margin: 0, marginBottom: '20px', textAlign: 'center', letterSpacing: '-0.05em' }}>
           Premium Amish Garages
         </h1>
