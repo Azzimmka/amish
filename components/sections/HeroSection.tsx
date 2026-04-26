@@ -1,300 +1,177 @@
 "use client";
 
 import Image from "next/image";
-import {
-    motion,
-    useMotionValue,
-    useSpring,
-    useTransform,
-    animate,
-} from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { ChevronRight, Phone, MapPin } from "lucide-react";
 import { siteConfig } from "@/config/site";
 import { useEffect, useState } from "react";
 
-// Smooth animated counter using Framer Motion
-function Counter({
-    end,
-    suffix = "",
-    duration = 2,
-}: {
-    end: number;
-    suffix?: string;
-    duration?: number;
-}) {
-    const count = useMotionValue(0);
-    const [display, setDisplay] = useState("0" + suffix);
+// Smooth animated counter
+function Counter({ end, suffix = "", duration = 2 }: { end: number; suffix?: string; duration?: number }) {
+  const [count, setCount] = useState(0);
 
-    useEffect(() => {
-        const controls = animate(count, end, {
-            duration,
-            ease: "easeOut",
-            delay: 1.2,
-            onUpdate: (latest) => {
-                setDisplay(Math.round(latest) + suffix);
-            },
-        });
-        return controls.stop;
-    }, [count, end, duration, suffix]);
+  useEffect(() => {
+    let startTimestamp: number | null = null;
+    const step = (timestamp: number) => {
+      if (!startTimestamp) startTimestamp = timestamp;
+      const progress = Math.min((timestamp - startTimestamp) / (duration * 1000), 1);
+      // easeOutExpo
+      const easeOut = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
+      setCount(Math.floor(easeOut * end));
+      if (progress < 1) {
+        window.requestAnimationFrame(step);
+      }
+    };
+    const timer = setTimeout(() => {
+      window.requestAnimationFrame(step);
+    }, 1200); // delay
+    return () => clearTimeout(timer);
+  }, [end, duration]);
 
-    return <span>{display}</span>;
+  return <span>{count}{suffix}</span>;
 }
 
-const TypewriterHeading = () => {
-    const [text1, setText1] = useState("");
-    const [text2, setText2] = useState("");
-
-    useEffect(() => {
-        const full1 = "Built by Hand.";
-        const full2 = "Built to Last.";
-        let isCancelled = false;
-
-        const run = async () => {
-            while (!isCancelled) {
-                // Initial wait
-                await new Promise(r => setTimeout(r, 500));
-                if (isCancelled) break;
-
-                // Type line 1
-                await animate(0, full1.length, {
-                    duration: 0.8,
-                    ease: "linear",
-                    onUpdate: v => {
-                        if (!isCancelled) setText1(full1.substring(0, Math.round(v)));
-                    }
-                });
-                if (isCancelled) break;
-
-                // Pause before line 2
-                await new Promise(r => setTimeout(r, 200));
-                if (isCancelled) break;
-
-                // Type line 2
-                await animate(0, full2.length, {
-                    duration: 0.8,
-                    ease: "linear",
-                    onUpdate: v => {
-                        if (!isCancelled) setText2(full2.substring(0, Math.round(v)));
-                    }
-                });
-                if (isCancelled) break;
-
-                // Read time
-                await new Promise(r => setTimeout(r, 4000));
-                if (isCancelled) break;
-
-                // Delete line 2
-                await animate(full2.length, 0, {
-                    duration: 0.4,
-                    ease: "linear",
-                    onUpdate: v => {
-                        if (!isCancelled) setText2(full2.substring(0, Math.round(v)));
-                    }
-                });
-                if (isCancelled) break;
-
-                // Delete line 1
-                await animate(full1.length, 0, {
-                    duration: 0.4,
-                    ease: "linear",
-                    onUpdate: v => {
-                        if (!isCancelled) setText1(full1.substring(0, Math.round(v)));
-                    }
-                });
-            }
-        };
-
-        run();
-        return () => {
-            isCancelled = true;
-        };
-    }, []);
-
-    return (
-        <h1 className="text-6xl sm:text-7xl lg:text-8xl xl:text-9xl font-black text-cream leading-[1.05] tracking-tighter mb-8 sm:mb-10 drop-shadow-2xl min-h-[2.2em]">
-            <span className="inline-block min-h-[1em]">{text1 || "\u00A0"}</span>
-            <br />
-            <span className="inline-block relative min-h-[1em]">
-                <span className="text-copper">{text2 || "\u00A0"}</span>
-                <motion.span
-                    animate={{ opacity: [1, 0, 1] }}
-                    transition={{ repeat: Infinity, duration: 0.8, ease: "linear" }}
-                    className="absolute -right-[0.5em] bottom-[0.15em] inline-block w-[0.08em] h-[0.8em] bg-copper align-baseline"
-                />
-            </span>
-        </h1>
-    );
-};
-
 export default function HeroSection() {
-    const mouseX = useMotionValue(0.5);
-    const mouseY = useMotionValue(0.5);
+  const { scrollY } = useScroll();
+  const y1 = useTransform(scrollY, [0, 1000], [0, 200]);
+  const opacityFade = useTransform(scrollY, [0, 600], [1, 0]);
+  const scaleImage = useTransform(scrollY, [0, 800], [1, 1.15]);
 
-    const springConfig = { damping: 40, stiffness: 100, mass: 1 };
-    const smoothX = useSpring(mouseX, springConfig);
-    const smoothY = useSpring(mouseY, springConfig);
+  return (
+    <section id="hero" className="relative flex flex-col min-h-[100svh] bg-forest overflow-hidden selection:bg-copper selection:text-white">
+      
+      {/* ── Layer 1: Cinematic Background Image ── */}
+      <motion.div 
+        className="absolute inset-0 z-0"
+        style={{ scale: scaleImage }}
+        initial={{ opacity: 0, scale: 1.1 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 2.5, ease: [0.33, 1, 0.68, 1] }}
+      >
+        <Image
+          src="/garage_1.jpg"
+          alt="Amish Built Garages"
+          fill
+          className="object-cover object-[center_30%] mix-blend-luminosity opacity-40 grayscale"
+          priority
+        />
+        {/* Dark Vignette & Gradient Overlays */}
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_transparent_0%,_#1a2e1a_120%)]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-forest/40 via-transparent to-forest/90" />
+      </motion.div>
 
-    // Subtle parallax offsets for the dark background
-    const bgX = useTransform(smoothX, [0, 1], ["2%", "-2%"]);
-    const bgY = useTransform(smoothY, [0, 1], ["2%", "-2%"]);
+      {/* ── Layer 2: Main Content ── */}
+      <motion.div 
+        className="relative z-10 flex-grow flex flex-col items-center justify-center w-full mx-auto px-4 pt-20 pb-28 sm:pt-24 sm:pb-32 text-center"
+        style={{ y: y1, opacity: opacityFade }}
+      >
+        
 
-    const handleMouseMove = (e: React.MouseEvent) => {
-        const { clientX, clientY } = e;
-        const { innerWidth, innerHeight } = window;
-        mouseX.set(clientX / innerWidth);
-        mouseY.set(clientY / innerHeight);
-    };
+        {/* Massive Architectural Typography */}
+        <div className="relative w-full max-w-[1200px] mx-auto mix-blend-plus-lighter">
+          <motion.h1 
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1.2, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
+            className="font-heading font-black leading-[0.8] tracking-tighter uppercase text-cream/90 flex flex-col items-center justify-center drop-shadow-2xl"
+          >
+            <span className="block text-[7.5vw] sm:text-[11vw] lg:text-[10rem] drop-shadow-[0_10px_30px_rgba(0,0,0,0.8)] -ml-0 sm:-ml-12">
+              Architectural
+            </span>
+            <span className="block text-copper italic font-serif normal-case tracking-normal font-light text-[24vw] sm:text-[12vw] lg:text-[11rem] leading-[0.6] z-10 relative ml-8 sm:ml-24 -mt-1 sm:-mt-8 drop-shadow-[0_10px_30px_rgba(0,0,0,0.8)]">
+              Amish
+            </span>
+            <span className="block text-[9vw] sm:text-[11vw] lg:text-[10rem] drop-shadow-[0_10px_30px_rgba(0,0,0,0.8)] -ml-4 sm:-ml-6 mt-3 sm:mt-0">
+              Strength.
+            </span>
+          </motion.h1>
+        </div>
 
-    return (
-        <section
-            id="hero"
-            className="relative flex flex-col min-h-screen bg-[#050505] overflow-hidden"
-            aria-label="Hero"
-            onMouseMove={handleMouseMove}
-            onMouseLeave={() => {
-                mouseX.set(0.5);
-                mouseY.set(0.5);
-            }}
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1.5, delay: 1.2 }}
+          className="mt-8 sm:mt-16 text-[10px] sm:text-base lg:text-lg text-cream/70 font-sans font-medium leading-relaxed max-w-xl mx-auto uppercase tracking-[0.1em] sm:tracking-[0.15em] drop-shadow-md px-2"
         >
-            {/* ── Background: Imposing dark garage scene ── */}
-            <motion.div
-                className="absolute inset-0 z-0 pointer-events-none origin-center"
-                initial={{ scale: 1.1 }}
-                animate={{ scale: 1 }}
-                transition={{ duration: 10, ease: "easeOut" }}
-                style={{ x: bgX, y: bgY }}
-            >
-                <div className="absolute inset-0 bg-gradient-to-b from-black/90 via-black/70 to-black/90 z-10" />
-                <Image
-                    src="/garage_1.jpg"
-                    alt=""
-                    fill
-                    className="object-cover grayscale opacity-40 mix-blend-overlay"
-                    priority
-                />
-            </motion.div>
+          Premium custom garages built by hand. <br className="hidden sm:block"/>
+          Designed to last generations.
+        </motion.p>
 
-            {/* ── Main Content Container (Centered) ── */}
-            <div className="relative z-20 flex-grow flex flex-col items-center justify-center w-full mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 pt-32 lg:pt-0 pb-32 lg:pb-24 text-center">
-                
-                {/* Badge */}
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6, delay: 0.2 }}
-                    className="mb-6 flex items-center justify-center gap-4"
-                >
-                    <div className="h-px w-8 sm:w-16 bg-copper/70" />
-                    <span className="text-[10px] sm:text-xs font-bold text-copper tracking-[0.3em] uppercase">
-                        Serving {siteConfig.address.region}
-                    </span>
-                    <div className="h-px w-8 sm:w-16 bg-copper/70" />
-                </motion.div>
+        {/* CTAs */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1, delay: 1.5 }}
+          className="mt-8 sm:mt-14 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 w-full max-w-[280px] sm:max-w-none"
+        >
+          <a
+            href="#visualizer"
+            className="group relative flex items-center justify-between gap-6 bg-copper px-6 py-4 sm:px-8 sm:py-5 text-[10px] sm:text-sm font-heading font-black text-cream tracking-[0.2em] sm:tracking-[0.3em] uppercase transition-all duration-500 hover:bg-white hover:text-forest w-full sm:w-auto overflow-hidden shadow-[0_0_40px_rgba(184,115,51,0.2)] hover:shadow-[0_0_60px_rgba(255,255,255,0.4)]"
+          >
+            <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-out" />
+            <span className="relative z-10">Start Your Build</span>
+            <ChevronRight className="relative z-10 h-4 w-4 transition-transform duration-500 group-hover:translate-x-2" />
+          </a>
+        </motion.div>
+      </motion.div>
 
-                {/* Imposing Heading with Typewriter Effect */}
-                <TypewriterHeading />
-
-                {/* Sub-headline */}
-                <motion.p
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.8, delay: 2.5 }}
-                    className="text-lg sm:text-xl lg:text-2xl text-cream/60 font-medium leading-relaxed mb-12 max-w-3xl mx-auto drop-shadow-md"
-                >
-                    Premium Amish craftsmanship for your perfect garage.
-                    Custom-built with decades of tradition and an unmatched
-                    10-year warranty.
-                </motion.p>
-
-                {/* CTAs */}
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.8, delay: 2.8 }}
-                    className="flex flex-col sm:flex-row items-center justify-center gap-6 w-full"
-                >
-                    <a
-                        href="#visualizer"
-                        className="group relative inline-flex items-center gap-4 bg-copper px-10 py-5 sm:px-12 sm:py-6 text-sm sm:text-base font-black text-cream tracking-[0.2em] uppercase transition-all duration-300 hover:bg-copper-light hover:-translate-y-1 hover:shadow-[0_20px_40px_rgba(184,115,51,0.4)] w-full sm:w-auto justify-center"
-                    >
-                        Start Build
-                        <ChevronRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
-                    </a>
-                    <a
-                        href={`tel:${siteConfig.phone.replace(/[^\d]/g, "")}`}
-                        className="flex items-center justify-center gap-4 text-cream/70 hover:text-white transition-colors py-4 px-6 w-full sm:w-auto group"
-                    >
-                        <div className="h-12 w-12 sm:h-14 sm:w-14 rounded-full border border-white/10 flex items-center justify-center bg-white/5 backdrop-blur-sm group-hover:bg-white/10 transition-colors">
-                            <Phone className="h-5 w-5 sm:h-6 sm:w-6 text-copper" />
-                        </div>
-                        <span className="text-base sm:text-lg font-bold tracking-wider">
-                            {siteConfig.phone}
-                        </span>
-                    </a>
-                </motion.div>
+      {/* ── Layer 3: Stats Bar ── */}
+      <motion.div
+        initial={{ opacity: 0, y: 40 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 1, delay: 2 }}
+        className="absolute bottom-0 left-0 w-full z-30 border-t border-white/5 bg-forest/90 backdrop-blur-xl pb-safe"
+      >
+        <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-8 py-4 sm:py-6 items-center">
+            
+            <div className="space-y-0.5 sm:space-y-1 text-center lg:text-left border-r border-white/5">
+              <p className="text-xl sm:text-4xl font-heading font-black text-cream">
+                <Counter end={10} suffix="+" duration={1.5} />
+              </p>
+              <p className="text-[7px] sm:text-[10px] text-copper tracking-[0.1em] sm:tracking-[0.2em] uppercase font-bold">
+                Years Warranty
+              </p>
             </div>
 
-            {/* ── Layer 3: Stats Bar ── */}
-            <motion.div
-                initial={{ opacity: 0, y: 50 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 3.2 }}
-                className="absolute bottom-0 left-0 w-full z-30 border-t border-white/5 bg-black/40 backdrop-blur-xl"
-            >
-                <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 sm:gap-8 py-6 sm:py-8 items-center">
-                        <div className="space-y-1 text-center sm:text-left">
-                            <p className="text-3xl sm:text-4xl font-black text-cream drop-shadow-md">
-                                <Counter end={10} suffix="+" duration={1.5} />
-                            </p>
-                            <p className="text-[9px] sm:text-[10px] text-copper tracking-[0.2em] uppercase font-bold">
-                                Years Warranty
-                            </p>
-                        </div>
+            <div className="space-y-0.5 sm:space-y-1 text-center lg:text-left border-r border-white/5">
+              <p className="text-xl sm:text-4xl font-heading font-black text-cream">
+                <Counter end={127} suffix="+" duration={2} />
+              </p>
+              <p className="text-[7px] sm:text-[10px] text-copper tracking-[0.1em] sm:tracking-[0.2em] uppercase font-bold">
+                Garages Built
+              </p>
+            </div>
 
-                        <div className="space-y-1 text-center sm:text-left">
-                            <p className="text-3xl sm:text-4xl font-black text-cream drop-shadow-md">
-                                <Counter end={127} suffix="+" duration={2} />
-                            </p>
-                            <p className="text-[9px] sm:text-[10px] text-copper tracking-[0.2em] uppercase font-bold">
-                                Garages Built
-                            </p>
-                        </div>
-
-                        <div className="space-y-1 flex flex-col items-center sm:items-start">
-                            <div className="flex items-center gap-2">
-                                <p className="text-3xl sm:text-4xl font-black text-cream drop-shadow-md">
-                                    5.0
-                                </p>
-                                <div className="hidden lg:flex gap-0.5 drop-shadow-md">
-                                    {[...Array(5)].map((_, i) => (
-                                        <svg
-                                            key={i}
-                                            className="w-3.5 h-3.5 text-copper"
-                                            fill="currentColor"
-                                            viewBox="0 0 20 20"
-                                        >
-                                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                        </svg>
-                                    ))}
-                                </div>
-                            </div>
-                            <p className="text-[9px] sm:text-[10px] text-copper tracking-[0.2em] uppercase font-bold">
-                                Client Rating
-                            </p>
-                        </div>
-
-                        <div className="hidden sm:flex justify-end">
-                            <div className="inline-flex items-center gap-3 px-5 py-2.5 bg-white/5 rounded-full border border-white/10 hover:bg-white/10 transition-colors">
-                                <MapPin className="h-4 w-4 text-copper" />
-                                <span className="text-[10px] text-cream/70 font-bold uppercase tracking-widest">
-                                    USA, Chicagoland
-                                </span>
-                            </div>
-                        </div>
-                    </div>
+            <div className="space-y-0.5 sm:space-y-1 flex flex-col items-center lg:items-start lg:border-r border-white/5">
+              <div className="flex items-center gap-1 sm:gap-2">
+                <p className="text-xl sm:text-4xl font-heading font-black text-cream">
+                  5.0
+                </p>
+                <div className="hidden sm:flex gap-0.5">
+                  {[...Array(5)].map((_, i) => (
+                    <svg key={i} className="w-3.5 h-3.5 text-copper" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                    </svg>
+                  ))}
                 </div>
-            </motion.div>
-        </section>
-    );
+              </div>
+              <p className="text-[7px] sm:text-[10px] text-copper tracking-[0.1em] sm:tracking-[0.2em] uppercase font-bold">
+                Client Rating
+              </p>
+            </div>
+
+            <div className="hidden lg:flex justify-end">
+              <div className="inline-flex items-center gap-3 px-5 py-3 bg-white/5 rounded-full border border-white/10">
+                <MapPin className="h-4 w-4 text-copper animate-bounce" />
+                <span className="text-[10px] text-cream/90 font-bold uppercase tracking-widest">
+                  USA, Chicagoland
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </motion.div>
+    </section>
+  );
 }

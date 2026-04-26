@@ -1,8 +1,9 @@
 "use client";
 
 import { useActionState } from "react";
+import Image from "next/image";
 import { motion } from "framer-motion";
-import { Send, CheckCircle2, User, Phone, Mail, MapPin } from "lucide-react";
+import { Send, CheckCircle2, ArrowRight } from "lucide-react";
 import { submitQuote, type QuoteFormState } from "@/actions/leads";
 import { cn } from "@/lib/utils";
 
@@ -15,221 +16,229 @@ export default function QuoteFormSection() {
   const [state, formAction, isPending] = useActionState(submitQuote, initialState);
 
   return (
-    <section
-      id="quote"
-      className="py-20 sm:py-28 bg-forest relative overflow-hidden"
-      aria-label="Get a Free Quote"
-    >
-      {/* Decorative background */}
-      <div className="absolute inset-0 opacity-5">
-        <div className="absolute top-0 right-0 w-96 h-96 rounded-full bg-copper blur-3xl" />
-        <div className="absolute bottom-0 left-0 w-96 h-96 rounded-full bg-copper blur-3xl" />
+    <section id="quote" className="flex flex-col lg:flex-row min-h-[100svh] w-full bg-cream" aria-label="Get a Free Quote">
+      
+      {/* ── Left: Architectural Imagery & Copy ── */}
+      <div className="relative w-full lg:w-1/2 min-h-[50svh] lg:min-h-full flex flex-col justify-between p-8 sm:p-16 lg:p-24 bg-forest text-cream overflow-hidden">
+        
+        {/* Background Image */}
+        <div className="absolute inset-0 z-0">
+          <Image
+            src="/garage_2.jpg"
+            alt="Amish Built Garage"
+            fill
+            className="object-cover opacity-20 grayscale mix-blend-overlay"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-forest/50 to-forest" />
+        </div>
+
+        <motion.div 
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8 }}
+          className="relative z-10"
+        >
+          <div className="inline-flex items-center gap-2 mb-8">
+            <div className="h-1 w-8 bg-copper" />
+            <span className="text-[10px] font-bold text-copper tracking-[0.3em] uppercase">Project Initiation</span>
+          </div>
+
+          <h2 className="text-5xl sm:text-6xl lg:text-7xl font-heading font-black tracking-tighter uppercase leading-[0.9] mb-8">
+            Start Your <br/>
+            <span className="text-copper italic font-serif normal-case font-light">Legacy.</span>
+          </h2>
+          
+          <p className="text-cream/60 text-lg leading-relaxed max-w-md font-medium">
+            Engage with our master craftsmen. Submit your details, and we will contact you within 24 hours to discuss the architecture of your new garage.
+          </p>
+        </motion.div>
+
+        <motion.div 
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8, delay: 0.3 }}
+          className="relative z-10 mt-16 lg:mt-0 flex flex-col gap-6"
+        >
+          <div className="flex items-center gap-4 border-l border-white/10 pl-6">
+            <span className="text-2xl font-heading font-black text-white">01</span>
+            <p className="text-sm text-cream/50 uppercase tracking-widest font-bold">Request Quote</p>
+          </div>
+          <div className="flex items-center gap-4 border-l border-copper pl-6">
+            <span className="text-2xl font-heading font-black text-copper">02</span>
+            <p className="text-sm text-copper uppercase tracking-widest font-bold">Design Consultation</p>
+          </div>
+          <div className="flex items-center gap-4 border-l border-white/10 pl-6">
+            <span className="text-2xl font-heading font-black text-white">03</span>
+            <p className="text-sm text-cream/50 uppercase tracking-widest font-bold">Construction</p>
+          </div>
+        </motion.div>
       </div>
 
-      <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-          {/* ── Left: Copy ── */}
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="space-y-6"
-          >
-            <span className="inline-block text-copper text-sm font-bold tracking-widest uppercase">
-              Free Estimate
-            </span>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-cream tracking-tight leading-tight">
-              Ready to Build
-              <br />
-              <span className="text-copper">Your Dream Garage?</span>
-            </h2>
-            <p className="text-cream/60 text-lg leading-relaxed max-w-md">
-              Fill out the form and we&apos;ll get back to you within 24 hours with a
-              free, no-obligation quote. Your selected garage design will be
-              included automatically.
-            </p>
-            <div className="flex flex-col gap-4 pt-4">
-              {[
-                "Free, no-obligation estimate",
-                "Response within 24 hours",
-                "Custom design consultation",
-              ].map((item) => (
-                <div key={item} className="flex items-center gap-3">
-                  <CheckCircle2 className="h-5 w-5 text-copper shrink-0" />
-                  <span className="text-cream/70 text-sm">{item}</span>
-                </div>
-              ))}
-            </div>
-          </motion.div>
-
-          {/* ── Right: Form ── */}
+      {/* ── Right: Minimalist Form ── */}
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 sm:p-16 lg:p-24 bg-cream">
+        
+        <div className="w-full max-w-md">
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.2 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
           >
             {state.success ? (
-              /* Success State */
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="bg-white/10 backdrop-blur-sm border border-cream/10 rounded-3xl p-10 text-center"
-              >
-                <div className="mx-auto h-20 w-20 rounded-full bg-copper/20 flex items-center justify-center mb-6">
-                  <CheckCircle2 className="h-10 w-10 text-copper" />
+              <div className="text-center space-y-6">
+                <div className="mx-auto h-24 w-24 rounded-full border border-copper/30 flex items-center justify-center bg-copper/5">
+                  <CheckCircle2 className="h-10 w-10 text-copper" strokeWidth={1.5} />
                 </div>
-                <h3 className="text-2xl font-bold text-cream mb-3">
-                  Quote Submitted!
+                <h3 className="text-3xl font-heading font-black text-forest uppercase tracking-tight">
+                  Request Received
                 </h3>
-                <p className="text-cream/60 text-base leading-relaxed">
+                <p className="text-charcoal/60 leading-relaxed font-medium">
                   {state.message}
                 </p>
-              </motion.div>
+              </div>
             ) : (
-              /* Form */
-              <form
-                action={formAction}
-                className="bg-white/10 backdrop-blur-sm border border-cream/10 rounded-3xl p-8 sm:p-10 space-y-5"
-              >
+              <form action={formAction} className="space-y-0">
+                
+                <div className="mb-16">
+                  <h3 className="text-4xl sm:text-5xl font-heading font-black text-forest uppercase tracking-tighter leading-none mb-4">
+                    Get <br/> Quote.
+                  </h3>
+                  <div className="h-1 w-12 bg-copper" />
+                </div>
+
                 {state.message && !state.success && (
-                  <div className="rounded-xl bg-red-500/10 border border-red-500/20 px-4 py-3 text-sm text-red-300">
-                    {state.message}
+                  <div className="mb-10 border-l-4 border-red-500 pl-4 py-2 bg-red-50">
+                    <p className="text-sm text-red-600 font-bold uppercase tracking-wider">{state.message}</p>
                   </div>
                 )}
 
                 {/* Full Name */}
-                <div>
-                  <label htmlFor="fullName" className="block text-sm font-medium text-cream/80 mb-2">
-                    Full Name
-                  </label>
-                  <div className="relative">
-                    <User className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-cream/30" />
+                <div className="flex items-start gap-6 py-8 border-b border-charcoal/10 group focus-within:border-copper transition-colors">
+                  <span className="text-xs font-black text-charcoal/20 pt-2 tracking-tighter">01.</span>
+                  <div className="flex-1 space-y-2">
+                    <label htmlFor="fullName" className="block text-[10px] font-black text-copper uppercase tracking-[0.2em]">
+                      Full Name
+                    </label>
                     <input
                       type="text"
                       id="fullName"
                       name="fullName"
                       required
-                      placeholder="John Smith"
+                      placeholder="Enter your name"
                       className={cn(
-                        "w-full rounded-xl border bg-white/5 pl-11 pr-4 py-3.5 text-cream placeholder:text-cream/30 text-sm",
-                        "border-cream/10 focus:border-copper focus:ring-1 focus:ring-copper transition-colors",
-                        state.errors?.fullName && "border-red-500/50"
+                        "w-full bg-transparent p-0 text-2xl sm:text-3xl font-heading font-bold text-forest placeholder:text-charcoal/30 focus:ring-0 outline-none",
+                        state.errors?.fullName && "text-red-500"
                       )}
                     />
+                    {state.errors?.fullName && (
+                      <p className="text-[10px] font-bold uppercase tracking-wider text-red-500">{state.errors.fullName[0]}</p>
+                    )}
                   </div>
-                  {state.errors?.fullName && (
-                    <p className="mt-1 text-xs text-red-400">{state.errors.fullName[0]}</p>
-                  )}
                 </div>
 
                 {/* Phone */}
-                <div>
-                  <label htmlFor="phone" className="block text-sm font-medium text-cream/80 mb-2">
-                    Phone Number
-                  </label>
-                  <div className="relative">
-                    <Phone className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-cream/30" />
+                <div className="flex items-start gap-6 py-8 border-b border-charcoal/10 group focus-within:border-copper transition-colors">
+                  <span className="text-xs font-black text-charcoal/20 pt-2 tracking-tighter">02.</span>
+                  <div className="flex-1 space-y-2">
+                    <label htmlFor="phone" className="block text-[10px] font-black text-copper uppercase tracking-[0.2em]">
+                      Phone Number
+                    </label>
                     <input
                       type="tel"
                       id="phone"
                       name="phone"
                       required
-                      placeholder="(312) 555-0147"
+                      placeholder="+1 (000) 000-0000"
                       className={cn(
-                        "w-full rounded-xl border bg-white/5 pl-11 pr-4 py-3.5 text-cream placeholder:text-cream/30 text-sm",
-                        "border-cream/10 focus:border-copper focus:ring-1 focus:ring-copper transition-colors",
-                        state.errors?.phone && "border-red-500/50"
+                        "w-full bg-transparent border-none p-0 text-2xl sm:text-3xl font-heading font-bold text-forest placeholder:text-charcoal/30 focus:ring-0 outline-none",
+                        state.errors?.phone && "text-red-500"
                       )}
                     />
+                    {state.errors?.phone && (
+                      <p className="text-[10px] font-bold uppercase tracking-wider text-red-500">{state.errors.phone[0]}</p>
+                    )}
                   </div>
-                  {state.errors?.phone && (
-                    <p className="mt-1 text-xs text-red-400">{state.errors.phone[0]}</p>
-                  )}
                 </div>
 
                 {/* Email */}
-                <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-cream/80 mb-2">
-                    Email Address
-                  </label>
-                  <div className="relative">
-                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-cream/30" />
+                <div className="flex items-start gap-6 py-8 border-b border-charcoal/10 group focus-within:border-copper transition-colors">
+                  <span className="text-xs font-black text-charcoal/20 pt-2 tracking-tighter">03.</span>
+                  <div className="flex-1 space-y-2">
+                    <label htmlFor="email" className="block text-[10px] font-black text-copper uppercase tracking-[0.2em]">
+                      Email Address
+                    </label>
                     <input
                       type="email"
                       id="email"
                       name="email"
                       required
-                      placeholder="john@example.com"
+                      placeholder="example@mail.com"
                       className={cn(
-                        "w-full rounded-xl border bg-white/5 pl-11 pr-4 py-3.5 text-cream placeholder:text-cream/30 text-sm",
-                        "border-cream/10 focus:border-copper focus:ring-1 focus:ring-copper transition-colors",
-                        state.errors?.email && "border-red-500/50"
+                        "w-full bg-transparent border-none p-0 text-2xl sm:text-3xl font-heading font-bold text-forest placeholder:text-charcoal/30 focus:ring-0 outline-none",
+                        state.errors?.email && "text-red-500"
                       )}
                     />
+                    {state.errors?.email && (
+                      <p className="text-[10px] font-bold uppercase tracking-wider text-red-500">{state.errors.email[0]}</p>
+                    )}
                   </div>
-                  {state.errors?.email && (
-                    <p className="mt-1 text-xs text-red-400">{state.errors.email[0]}</p>
-                  )}
                 </div>
 
                 {/* Location */}
-                <div>
-                  <label htmlFor="projectLocation" className="block text-sm font-medium text-cream/80 mb-2">
-                    Project Location
-                  </label>
-                  <div className="relative">
-                    <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-cream/30" />
+                <div className="flex items-start gap-6 py-8 border-b border-charcoal/10 group focus-within:border-copper transition-colors">
+                  <span className="text-xs font-black text-charcoal/20 pt-2 tracking-tighter">04.</span>
+                  <div className="flex-1 space-y-2">
+                    <label htmlFor="projectLocation" className="block text-[10px] font-black text-copper uppercase tracking-[0.2em]">
+                      Project Location
+                    </label>
                     <input
                       type="text"
                       id="projectLocation"
                       name="projectLocation"
                       required
-                      placeholder="Chicago, IL 60601"
+                      placeholder="City, State"
                       className={cn(
-                        "w-full rounded-xl border bg-white/5 pl-11 pr-4 py-3.5 text-cream placeholder:text-cream/30 text-sm",
-                        "border-cream/10 focus:border-copper focus:ring-1 focus:ring-copper transition-colors",
-                        state.errors?.projectLocation && "border-red-500/50"
+                        "w-full bg-transparent border-none p-0 text-2xl sm:text-3xl font-heading font-bold text-forest placeholder:text-charcoal/30 focus:ring-0 outline-none",
+                        state.errors?.projectLocation && "text-red-500"
                       )}
                     />
+                    {state.errors?.projectLocation && (
+                      <p className="text-[10px] font-bold uppercase tracking-wider text-red-500">{state.errors.projectLocation[0]}</p>
+                    )}
                   </div>
-                  {state.errors?.projectLocation && (
-                    <p className="mt-1 text-xs text-red-400">{state.errors.projectLocation[0]}</p>
-                  )}
                 </div>
 
                 {/* Submit */}
-                <button
-                  type="submit"
-                  disabled={isPending}
-                  className={cn(
-                    "w-full flex items-center justify-center gap-3 rounded-xl bg-copper px-8 py-4 text-base font-bold text-cream tracking-wide",
-                    "shadow-lg shadow-copper/20 transition-all duration-300",
-                    "hover:bg-copper-light hover:shadow-xl hover:shadow-copper/30",
-                    "active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed"
-                  )}
-                >
-                  {isPending ? (
-                    <>
-                      <div className="h-5 w-5 border-2 border-cream/30 border-t-cream rounded-full animate-spin" />
-                      Submitting...
-                    </>
-                  ) : (
-                    <>
-                      <Send className="h-5 w-5" />
-                      Get My Free Quote
-                    </>
-                  )}
-                </button>
+                <div className="pt-12">
+                  <button
+                    type="submit"
+                    disabled={isPending}
+                    className={cn(
+                      "group flex items-center justify-between w-full bg-forest text-cream px-10 py-6 text-xs font-heading font-black tracking-[0.4em] uppercase transition-all duration-500 hover:bg-copper",
+                      "disabled:opacity-70 disabled:cursor-not-allowed overflow-hidden relative shadow-[0_20px_40px_rgba(26,46,26,0.2)]"
+                    )}
+                  >
+                    <span className="relative z-10">
+                      {isPending ? "Sending Brief..." : "Get A Free Quote"}
+                    </span>
+                    {isPending ? (
+                      <div className="relative z-10 h-5 w-5 border-2 border-cream/30 border-t-cream rounded-full animate-spin" />
+                    ) : (
+                      <div className="relative z-10 flex items-center gap-2">
+                        <span className="text-[10px] opacity-50 font-sans tracking-normal lowercase italic group-hover:opacity-100 transition-opacity">secure transmission</span>
+                        <ArrowRight className="h-5 w-5 transition-transform duration-500 group-hover:translate-x-2" />
+                      </div>
+                    )}
+                  </button>
+                </div>
 
-                <p className="text-center text-xs text-cream/30">
-                  No spam. No obligation. Just a straightforward quote.
-                </p>
               </form>
             )}
           </motion.div>
         </div>
+
       </div>
     </section>
   );

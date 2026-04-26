@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowRight, Home, Paintbrush, DoorOpen, X } from "lucide-react";
+import { ArrowRight, Settings2, ShieldCheck, ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 /* ─── Data ──────────────────────────────────────────────────── */
@@ -17,13 +17,22 @@ interface GarageItem {
 }
 
 const garages: GarageItem[] = [
+  // Standard Style
   { id: "g1", src: "/garage_1.jpg",  label: "Tan Standard",       style: "Standard", color: "Tan",   door: "Open Bay" },
   { id: "g2", src: "/garage_2.jpg",  label: "Cream Classic",      style: "Standard", color: "Cream", door: "Open Bay" },
   { id: "g3", src: "/garage_3.jpg",  label: "Sage Green",         style: "Standard", color: "Green", door: "Panel"   },
   { id: "g4", src: "/garage_4.jpg",  label: "Storm Gray",         style: "Standard", color: "Gray",  door: "Panel"   },
   { id: "g5", src: "/garage_5.jpg",  label: "Navy Blue",          style: "Standard", color: "Blue",  door: "Panel"   },
-  { id: "g6", src: "/garage_6.jpg",  label: "White Cape Cod",     style: "Cape Cod", color: "White", door: "Open Bay"},
+  { id: "g8", src: "/white_Garage.png", label: "White Standard",  style: "Standard", color: "White", door: "Panel"   },
   { id: "g7", src: "/garage_7.jpg",  label: "Beige Double-Wide",  style: "Standard", color: "Beige", door: "Panel"   },
+  // Cape Cod Style
+  { id: "g9", src: "/Tan-Cape-Cod-style .jpg", label: "Tan Cape Cod", style: "Cape Cod", color: "Tan", door: "Open Bay" },
+  { id: "g10", src: "/CreamColorCapeCod .jpg", label: "Cream Cape Cod", style: "Cape Cod", color: "Cream", door: "Panel" },
+  { id: "g11", src: "/Green-Cape .jpg", label: "Green Cape Cod", style: "Cape Cod", color: "Green", door: "Open Bay" },
+  { id: "g12", src: "/Gray-Cape .jpg", label: "Gray Cape Cod", style: "Cape Cod", color: "Gray", door: "Panel" },
+  { id: "g13", src: "/Blue-Cape .jpeg", label: "Blue Cape Cod", style: "Cape Cod", color: "Blue", door: "Open Bay" },
+  { id: "g6", src: "/garage_6.jpg",  label: "White Cape Cod",     style: "Cape Cod", color: "White", door: "Open Bay"},
+  { id: "g14", src: "/Beige-Cape .jpg", label: "Beige Cape Cod", style: "Cape Cod", color: "Beige", door: "Panel" },
 ];
 
 const colorSwatches: Record<string, string> = {
@@ -31,27 +40,35 @@ const colorSwatches: Record<string, string> = {
   Gray: "#708090", Blue: "#4a6fa5", White: "#f0f0f0", Beige: "#d4c5a9",
 };
 
-/* ─── Filter pill ───────────────────────────────────────────── */
-function Pill({
+/* ─── Floating Pill ─────────────────────────────────────────── */
+function ConfigPill({
   label, active, swatch, onClick,
 }: { label: string; active: boolean; swatch?: string; onClick: () => void }) {
   return (
     <button
       onClick={onClick}
       className={cn(
-        "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 whitespace-nowrap",
+        "relative flex items-center justify-center gap-2 px-5 py-3 rounded-full text-[11px] font-bold tracking-[0.15em] uppercase transition-all duration-300 overflow-hidden",
         active
-          ? "bg-forest text-cream shadow"
-          : "bg-white border border-charcoal/10 text-charcoal/60 hover:border-forest/40 hover:text-forest"
+          ? "text-forest bg-cream shadow-[0_0_20px_rgba(255,255,255,0.2)]"
+          : "text-cream/70 bg-white/5 border border-white/10 hover:bg-white/10 hover:text-white hover:border-white/20"
       )}
     >
+      {active && (
+        <motion.div
+          layoutId="activeConfigGlow"
+          className="absolute inset-0 bg-cream"
+          transition={{ type: "spring", stiffness: 400, damping: 30 }}
+        />
+      )}
+      
       {swatch && (
         <span
-          className="h-2.5 w-2.5 rounded-full border border-charcoal/15 shrink-0"
+          className="relative z-10 h-3 w-3 rounded-full border border-charcoal/20 shadow-inner"
           style={{ backgroundColor: swatch }}
         />
       )}
-      {label}
+      <span className="relative z-10">{label}</span>
     </button>
   );
 }
@@ -79,232 +96,172 @@ export default function VisualizerSection() {
 
   const hero = garages.find((g) => g.id === heroId) ?? garages[0];
 
-  const resetFilters = () => {
-    setActiveStyle("All");
-    setActiveColor("All");
-    setActiveDoor("All");
+  const handleNext = () => {
+    const currentIndex = filtered.findIndex(g => g.id === heroId);
+    if (currentIndex < filtered.length - 1) {
+      setHeroId(filtered[currentIndex + 1].id);
+    } else {
+      setHeroId(filtered[0].id); // loop
+    }
   };
 
-  const hasActiveFilter = activeStyle !== "All" || activeColor !== "All" || activeDoor !== "All";
+  const handlePrev = () => {
+    const currentIndex = filtered.findIndex(g => g.id === heroId);
+    if (currentIndex > 0) {
+      setHeroId(filtered[currentIndex - 1].id);
+    } else {
+      setHeroId(filtered[filtered.length - 1].id); // loop
+    }
+  };
 
   return (
-    <section
-      id="visualizer"
-      className="py-20 sm:py-28 bg-cream"
-      aria-label="Design Your Garage"
-    >
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-
-        {/* ── Header ────────────────────────────────────────── */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-12"
-        >
-          <span className="inline-block text-copper text-sm font-bold tracking-widest uppercase mb-3">
-            Interactive Catalog
-          </span>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-forest tracking-tight">
-            Design Your Dream Garage
-          </h2>
-          <p className="mt-4 text-base text-charcoal/50 max-w-xl mx-auto">
-            Filter by style, color, and door type — click any thumbnail to preview.
-          </p>
-        </motion.div>
-
-        {/* ── Two-column layout ─────────────────────────────── */}
-        <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-8 items-start">
-
-          {/* ── LEFT: Filters (sticky desktop) ─────────────── */}
-          <motion.aside
-            initial={{ opacity: 0, x: -16 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="lg:sticky lg:top-28 space-y-5"
-          >
-            {/* Style */}
-            <div className="bg-white rounded-2xl p-5 shadow-sm border border-charcoal/5">
-              <div className="flex items-center gap-2 mb-3">
-                <Home className="h-4 w-4 text-copper" />
-                <span className="text-xs font-bold text-charcoal/50 uppercase tracking-wider">Style</span>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {["All", "Standard", "Cape Cod"].map((s) => (
-                  <Pill key={s} label={s} active={activeStyle === s} onClick={() => setActiveStyle(s)} />
-                ))}
-              </div>
-            </div>
-
-            {/* Color */}
-            <div className="bg-white rounded-2xl p-5 shadow-sm border border-charcoal/5">
-              <div className="flex items-center gap-2 mb-3">
-                <Paintbrush className="h-4 w-4 text-copper" />
-                <span className="text-xs font-bold text-charcoal/50 uppercase tracking-wider">Wall Color</span>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                <Pill label="All" active={activeColor === "All"} onClick={() => setActiveColor("All")} />
-                {Object.keys(colorSwatches).map((c) => (
-                  <Pill key={c} label={c} active={activeColor === c} swatch={colorSwatches[c]} onClick={() => setActiveColor(c)} />
-                ))}
-              </div>
-            </div>
-
-            {/* Door */}
-            <div className="bg-white rounded-2xl p-5 shadow-sm border border-charcoal/5">
-              <div className="flex items-center gap-2 mb-3">
-                <DoorOpen className="h-4 w-4 text-copper" />
-                <span className="text-xs font-bold text-charcoal/50 uppercase tracking-wider">Door Type</span>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {["All", "Open Bay", "Panel"].map((d) => (
-                  <Pill key={d} label={d} active={activeDoor === d} onClick={() => setActiveDoor(d)} />
-                ))}
-              </div>
-            </div>
-
-            {/* Reset */}
-            <AnimatePresence>
-              {hasActiveFilter && (
-                <motion.button
-                  initial={{ opacity: 0, y: -8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -8 }}
-                  onClick={resetFilters}
-                  className="flex items-center gap-2 text-xs text-charcoal/50 hover:text-forest transition-colors font-medium"
-                >
-                  <X className="h-3.5 w-3.5" />
-                  Clear all filters
-                </motion.button>
-              )}
-            </AnimatePresence>
-          </motion.aside>
-
-          {/* ── RIGHT: Hero + Filmstrip ──────────────────────── */}
+    <section id="visualizer" className="relative bg-charcoal flex flex-col lg:block lg:min-h-[100svh]" aria-label="Garage Configurator">
+      
+      {/* ── Background Immersive Viewer (Sticky on Mobile, Absolute Full on Desktop) ── */}
+      <div className="sticky top-0 z-0 h-[55svh] lg:absolute lg:inset-0 lg:h-full bg-black overflow-hidden">
+        <AnimatePresence mode="wait">
           <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="space-y-4"
+            key={hero?.id || "empty"}
+            initial={{ opacity: 0, scale: 1.05, filter: "blur(10px)" }}
+            animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+            exit={{ opacity: 0, scale: 0.95, filter: "blur(10px)" }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+            className="absolute inset-0"
           >
-            {filtered.length === 0 ? (
-              /* Empty state */
-              <div className="aspect-[16/10] rounded-3xl bg-white border border-charcoal/5 flex flex-col items-center justify-center gap-4 shadow-sm">
-                <div className="h-14 w-14 rounded-full bg-charcoal/5 flex items-center justify-center">
-                  <Home className="h-7 w-7 text-charcoal/25" />
-                </div>
-                <p className="text-charcoal/40 text-base font-medium">No matches — try wider filters</p>
-                <button onClick={resetFilters} className="text-copper text-sm font-semibold hover:underline">
-                  Reset filters
-                </button>
-              </div>
+            {hero ? (
+              <Image
+                src={hero.src}
+                alt={hero.label}
+                fill
+                priority
+                className="object-cover opacity-90 lg:opacity-80 lg:mix-blend-screen"
+                sizes="100vw"
+              />
             ) : (
-              <>
-                {/* ── Hero image ──────────────────────────── */}
-                <div className="relative aspect-[16/10] rounded-3xl overflow-hidden shadow-xl shadow-charcoal/10">
-                  <AnimatePresence mode="wait">
-                    <motion.div
-                      key={hero.id}
-                      initial={{ opacity: 0, scale: 1.03 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 0.98 }}
-                      transition={{ duration: 0.45, ease: [0.4, 0, 0.2, 1] }}
-                      className="absolute inset-0"
-                    >
-                      <Image
-                        src={hero.src}
-                        alt={hero.label}
-                        fill
-                        priority
-                        className="object-cover"
-                        sizes="(max-width: 768px) 100vw, 70vw"
-                      />
-                    </motion.div>
-                  </AnimatePresence>
-
-                  {/* Gradient overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-charcoal/70 via-transparent to-transparent pointer-events-none" />
-
-                  {/* Bottom info row */}
-                  <div className="absolute bottom-0 left-0 right-0 p-5 sm:p-7 flex items-end justify-between gap-4">
-                    <AnimatePresence mode="wait">
-                      <motion.div
-                        key={hero.id + "-label"}
-                        initial={{ opacity: 0, y: 8 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -8 }}
-                        transition={{ duration: 0.25 }}
-                      >
-                        <p className="text-cream/60 text-xs font-semibold tracking-widest uppercase mb-1">
-                          {hero.style} · {hero.color} · {hero.door}
-                        </p>
-                        <h3 className="text-cream text-xl sm:text-2xl font-extrabold leading-tight">
-                          {hero.label}
-                        </h3>
-                      </motion.div>
-                    </AnimatePresence>
-
-                    <a
-                      href="#quote"
-                      className="shrink-0 inline-flex items-center gap-2 rounded-full bg-copper hover:bg-copper-light text-cream text-sm font-bold px-5 py-2.5 transition-all duration-200 shadow-lg active:scale-95"
-                    >
-                      Quote this
-                      <ArrowRight className="h-4 w-4" />
-                    </a>
-                  </div>
-
-                  {/* Count badge */}
-                  <div className="absolute top-4 right-4 bg-black/30 backdrop-blur-sm text-cream text-xs font-semibold px-3 py-1.5 rounded-full">
-                    {filtered.findIndex((g) => g.id === hero.id) + 1} / {filtered.length}
-                  </div>
-                </div>
-
-                {/* ── Filmstrip ───────────────────────────── */}
-                <div className="flex gap-3 overflow-x-auto pb-1 snap-x snap-mandatory scrollbar-none">
-                  {filtered.map((garage) => {
-                    const isActive = garage.id === heroId;
-                    return (
-                      <motion.button
-                        key={garage.id}
-                        layoutId={`thumb-${garage.id}`}
-                        onClick={() => setHeroId(garage.id)}
-                        whileHover={{ y: -3 }}
-                        whileTap={{ scale: 0.97 }}
-                        className={cn(
-                          "relative flex-shrink-0 w-24 sm:w-28 aspect-[4/3] rounded-xl overflow-hidden snap-start",
-                          "transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-copper",
-                          isActive
-                            ? "ring-2 ring-copper shadow-lg shadow-copper/20"
-                            : "ring-1 ring-charcoal/10 opacity-60 hover:opacity-100"
-                        )}
-                        aria-label={`View ${garage.label}`}
-                        aria-pressed={isActive}
-                      >
-                        <Image
-                          src={garage.src}
-                          alt={garage.label}
-                          fill
-                          className="object-cover"
-                          sizes="112px"
-                        />
-                        {/* Active underline */}
-                        {isActive && (
-                          <motion.div
-                            layoutId="activeThumbBar"
-                            className="absolute bottom-0 left-0 right-0 h-0.5 bg-copper"
-                          />
-                        )}
-                      </motion.button>
-                    );
-                  })}
-                </div>
-              </>
+              <div className="absolute inset-0 bg-charcoal flex items-center justify-center">
+                <p className="text-white/30 font-heading text-xl lg:text-2xl uppercase tracking-widest">No combinations found</p>
+              </div>
             )}
           </motion.div>
+        </AnimatePresence>
+        
+        {/* Cinematic Vignettes */}
+        <div className="hidden lg:block absolute inset-0 bg-[radial-gradient(ellipse_at_center,_transparent_0%,_#050505_120%)] pointer-events-none" />
+        <div className="absolute inset-x-0 top-0 h-32 lg:h-48 bg-gradient-to-b from-black/80 to-transparent pointer-events-none" />
+        <div className="absolute inset-x-0 bottom-0 h-32 lg:h-64 bg-gradient-to-t from-charcoal via-charcoal/50 lg:from-black lg:via-black/80 to-transparent pointer-events-none" />
+      </div>
+
+      {/* ── UI Layer ── */}
+      <div className="relative z-10 flex flex-col lg:h-screen w-full mx-auto max-w-7xl pointer-events-none">
+        
+        {/* Mobile Spacer (pushes header down slightly if needed, but we want header at top) */}
+        
+        {/* Header */}
+        <motion.div 
+          initial={{ opacity: 0, y: -20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8 }}
+          className="flex flex-col items-center sm:items-start pointer-events-auto px-4 pt-12 sm:px-6 lg:px-8 lg:pt-24"
+        >
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-white/10 bg-black/40 lg:bg-white/5 backdrop-blur-md mb-4 lg:mb-6">
+            <Settings2 className="w-4 h-4 text-copper" />
+            <span className="text-[10px] font-bold text-cream tracking-[0.2em] uppercase">Interactive Configurator</span>
+          </div>
+          <h2 className="text-4xl sm:text-5xl lg:text-7xl font-heading font-black text-white tracking-tighter uppercase drop-shadow-2xl text-center sm:text-left leading-none">
+            Design Your <br className="hidden sm:block" />
+            <span className="text-copper italic font-serif normal-case font-light drop-shadow-[0_0_30px_rgba(184,115,51,0.5)]">Masterpiece.</span>
+          </h2>
+        </motion.div>
+
+        {/* Mobile spacer to reveal image between header and controls */}
+        <div className="flex-grow min-h-[15svh] lg:min-h-0 flex items-center justify-between w-full pointer-events-none my-4 lg:my-8 px-4 sm:px-6 lg:px-8">
+            {/* Arrows */}
+            {filtered.length > 1 && (
+              <>
+                <button onClick={handlePrev} className="pointer-events-auto p-3 lg:p-4 rounded-full bg-black/40 border border-white/10 text-white hover:bg-copper hover:border-copper transition-all backdrop-blur-md group shadow-lg">
+                  <ChevronLeft className="w-5 h-5 lg:w-8 lg:h-8 group-hover:-translate-x-1 transition-transform" />
+                </button>
+                <button onClick={handleNext} className="pointer-events-auto p-3 lg:p-4 rounded-full bg-black/40 border border-white/10 text-white hover:bg-copper hover:border-copper transition-all backdrop-blur-md group shadow-lg">
+                  <ChevronRight className="w-5 h-5 lg:w-8 lg:h-8 group-hover:translate-x-1 transition-transform" />
+                </button>
+              </>
+            )}
         </div>
+
+        {/* Floating Controls Panel */}
+        <motion.div 
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+          className="mt-auto pointer-events-auto bg-charcoal lg:bg-transparent px-0 sm:px-6 lg:px-8 pb-0 lg:pb-24 rounded-t-[2.5rem] lg:rounded-none relative z-20"
+        >
+          {/* Mobile Handle (Optional visual cue) */}
+          <div className="w-full flex justify-center pt-4 pb-2 lg:hidden">
+            <div className="w-12 h-1.5 bg-white/20 rounded-full" />
+          </div>
+
+          <div className="bg-charcoal lg:bg-black/60 lg:backdrop-blur-2xl lg:border lg:border-white/10 lg:rounded-[2rem] p-6 sm:p-8 lg:shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
+            
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-end">
+              
+              {/* Left: Active Info */}
+              <div className="lg:col-span-4 flex flex-col justify-end border-b lg:border-b-0 lg:border-r border-white/10 pb-6 lg:pb-0 lg:pr-8">
+                <span className="text-[10px] font-bold text-copper tracking-[0.3em] uppercase mb-2 flex items-center gap-2">
+                  <ShieldCheck className="w-3.5 h-3.5" /> Amish Certified
+                </span>
+                <AnimatePresence mode="wait">
+                  <motion.h3 
+                    key={hero?.id || "none"}
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: 10 }}
+                    className="text-2xl sm:text-3xl font-heading font-black text-white uppercase tracking-wider mb-2"
+                  >
+                    {hero ? hero.label : "Custom Build"}
+                  </motion.h3>
+                </AnimatePresence>
+                <p className="text-sm text-white/50 font-medium">
+                  {hero ? `${hero.style} Style · ${hero.door} Door` : "Adjust filters to find matches"}
+                </p>
+                <div className="mt-6 lg:mt-8">
+                  <a href="#quote" className="inline-flex items-center justify-center gap-3 w-full bg-copper text-cream font-bold uppercase tracking-[0.2em] text-[11px] sm:text-xs py-4 lg:py-5 px-6 rounded-full hover:bg-white hover:text-black transition-colors duration-300">
+                    Get a Quote <ArrowRight className="w-4 h-4" />
+                  </a>
+                </div>
+              </div>
+
+              {/* Right: Selectors */}
+              <div className="lg:col-span-8 flex flex-col gap-6 lg:gap-8 lg:pl-4">
+                
+                {/* Style */}
+                <div className="space-y-3">
+                  <div className="text-[10px] font-bold text-white/40 tracking-[0.2em] uppercase">Architecture Style</div>
+                  <div className="flex flex-wrap gap-2 sm:gap-3">
+                    {["All", "Standard", "Cape Cod"].map((s) => (
+                      <ConfigPill key={s} label={s} active={activeStyle === s} onClick={() => setActiveStyle(s)} />
+                    ))}
+                  </div>
+                </div>
+
+                {/* Color */}
+                <div className="space-y-3">
+                  <div className="text-[10px] font-bold text-white/40 tracking-[0.2em] uppercase">Exterior Color</div>
+                  <div className="flex flex-wrap gap-2 sm:gap-3">
+                    <ConfigPill label="All" active={activeColor === "All"} onClick={() => setActiveColor("All")} />
+                    {Object.keys(colorSwatches).map((c) => (
+                      <ConfigPill key={c} label={c} active={activeColor === c} swatch={colorSwatches[c]} onClick={() => setActiveColor(c)} />
+                    ))}
+                  </div>
+                </div>
+
+              </div>
+
+            </div>
+          </div>
+        </motion.div>
+
       </div>
     </section>
   );
