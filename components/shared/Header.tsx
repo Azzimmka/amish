@@ -112,7 +112,7 @@ export default function Header() {
               href="#quote"
               className="inline-flex items-center justify-center rounded-full bg-copper px-7 py-2.5 text-[13px] uppercase tracking-[0.1em] font-bold text-cream transition-all hover:bg-copper-light hover:shadow-[0_0_20px_rgba(184,115,51,0.4)] active:scale-95"
             >
-              Free Quote
+              Get a quote
             </a>
           </div>
 
