@@ -78,141 +78,124 @@ export default function QualitySection() {
             <div className="absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-charcoal/10 to-transparent" />
 
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                {/* ── Top Section: Badges (OUT OF BOUNDS DESIGN) ── */}
-                <div className="mb-40 lg:mb-64 overflow-hidden py-10">
+                {/* ── Top Section: Badges (COMPACT SINGLE-VIEWPORT) ── */}
+                <div className="mb-24 lg:mb-32">
+                    {/* Header Row */}
                     <motion.div 
-                        initial={{ opacity: 0, y: 50 }}
+                        initial={{ opacity: 0, y: 40 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true, margin: "50px" }}
                         transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-                        className="mb-24 lg:mb-40 relative z-20"
+                        className="mb-16 lg:mb-20 relative z-20 flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6"
                     >
-                        <motion.span 
-                            initial={{ opacity: 0, x: -50 }}
-                            whileInView={{ opacity: 1, x: 0 }}
-                            transition={{ duration: 1, delay: 0.2, ease: "easeOut" }}
-                            className="inline-block text-copper text-sm font-bold tracking-[0.3em] uppercase mb-8"
+                        <div>
+                            <motion.span 
+                                initial={{ opacity: 0, x: -30 }}
+                                whileInView={{ opacity: 1, x: 0 }}
+                                transition={{ duration: 0.8, delay: 0.1, ease: "easeOut" }}
+                                className="inline-block text-copper text-xs font-bold tracking-[0.3em] uppercase mb-4"
+                            >
+                                The Amish Standard
+                            </motion.span>
+                            <h2 className="text-6xl md:text-7xl lg:text-8xl font-heading font-black text-charcoal tracking-tighter leading-[0.85] uppercase">
+                                <motion.span 
+                                    initial={{ opacity: 0, y: 60 }}
+                                    whileInView={{ opacity: 1, y: 0 }}
+                                    transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                                    className="inline-block"
+                                >
+                                    Built To{" "}
+                                </motion.span>
+                                <motion.span 
+                                    initial={{ opacity: 0, y: 60 }}
+                                    whileInView={{ opacity: 1, y: 0 }}
+                                    transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+                                    className="inline-block text-copper italic font-serif normal-case font-light"
+                                >
+                                    Outlast.
+                                </motion.span>
+                            </h2>
+                        </div>
+                        <motion.p 
+                            initial={{ opacity: 0 }}
+                            whileInView={{ opacity: 1 }}
+                            transition={{ duration: 0.8, delay: 0.3 }}
+                            className="text-charcoal/50 text-base lg:text-lg max-w-xs font-medium leading-relaxed lg:text-right"
                         >
-                            The Amish Standard
-                        </motion.span>
-                        <h2 className="text-[12vw] md:text-8xl lg:text-[140px] font-heading font-black text-charcoal tracking-tighter leading-[0.8] uppercase whitespace-nowrap -ml-2">
-                            <motion.span 
-                                initial={{ opacity: 0, y: 100, rotate: 5 }}
-                                whileInView={{ opacity: 1, y: 0, rotate: 0 }}
-                                transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-                                className="inline-block origin-bottom-left"
-                            >
-                                Built To 
-                            </motion.span>
-                            <br />
-                            <motion.span 
-                                initial={{ opacity: 0, y: 100, rotate: -5 }}
-                                whileInView={{ opacity: 1, y: 0, rotate: 0 }}
-                                transition={{ duration: 1, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-                                className="inline-block text-copper italic font-serif normal-case font-light drop-shadow-xl ml-12 md:ml-32 origin-bottom-right"
-                            >
-                                Outlast.
-                            </motion.span>
-                        </h2>
+                            Three pillars that define every structure we build.
+                        </motion.p>
                     </motion.div>
 
-                    <div className="relative w-full flex flex-col gap-32 lg:gap-52">
+                    {/* Badges Row — 3 columns, one viewport */}
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-0 border-t border-charcoal/10">
                         {badges.map((badge, i) => {
                             const Icon = badge.icon;
-                            const isEven = i % 2 === 0;
-
                             return (
                                 <motion.div
                                     key={badge.title}
-                                    initial="hidden"
-                                    whileInView="show"
+                                    initial={{ opacity: 0, y: 40 }}
+                                    whileInView={{ opacity: 1, y: 0 }}
                                     viewport={{ once: true, margin: "50px" }}
-                                    variants={{
-                                        hidden: { opacity: 0 },
-                                        show: { 
-                                            opacity: 1, 
-                                            transition: { staggerChildren: 0.1 } 
-                                        }
-                                    }}
-                                    className={cn(
-                                        "group relative w-full lg:w-3/4 flex flex-col",
-                                        !isEven
-                                            ? "lg:self-end lg:items-end text-left lg:text-right"
-                                            : "text-left"
-                                    )}
+                                    transition={{ duration: 0.7, delay: i * 0.15, ease: [0.16, 1, 0.3, 1] }}
+                                    className="group relative overflow-hidden border-b md:border-b-0 md:border-r last:border-r-0 border-charcoal/10 py-12 md:py-16 px-6 md:px-10 cursor-default"
                                 >
-                                    {/* GIANT FLOATING ICON BLEEDING OUT OF BOUNDS */}
-                                    <motion.div
-                                        variants={{
-                                            hidden: { opacity: 0, scale: 0.8, rotate: -15 },
-                                            show: { opacity: 0.05, scale: 1, rotate: 0, transition: { duration: 1.5, ease: [0.16, 1, 0.3, 1] } }
-                                        }}
-                                        className={cn(
-                                            "absolute top-1/2 -translate-y-1/2 z-0 pointer-events-none transition-transform duration-[2000ms] group-hover:scale-110",
-                                            !isEven
-                                                ? "-right-20 lg:-right-64"
-                                                : "-left-20 lg:-left-64"
-                                        )}
-                                    >
-                                        <motion.div 
-                                          animate={{ y: [0, -30, 0] }} 
-                                          transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: i }}
-                                        >
-                                            <Icon
-                                                className="w-[100vw] lg:w-[800px] h-[100vw] lg:h-[800px] text-charcoal"
-                                                strokeWidth={0.2}
-                                            />
-                                        </motion.div>
-                                    </motion.div>
+                                    {/* Grain / Noise Texture — handcrafted paper feel */}
+                                    <div className="absolute inset-0 bg-noise opacity-[0.06] mix-blend-multiply pointer-events-none" />
+                                    
+                                    {/* Warm radial glow on hover — like sunlight on natural wood */}
+                                    <div className="absolute inset-0 bg-radial-[at_30%_30%] from-copper/[0.04] via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
+
+                                    {/* Bottom copper accent — grows on hover */}
+                                    <div className="absolute bottom-0 left-0 w-full h-[2px] bg-gradient-to-r from-copper/60 via-copper to-copper/60 scale-x-0 group-hover:scale-x-100 origin-center transition-transform duration-600 ease-out" />
 
                                     <div className="relative z-10">
-                                        <div
-                                            className={cn(
-                                                "flex flex-col gap-4 mb-6",
-                                                !isEven
-                                                    ? "lg:items-end"
-                                                    : "items-start"
-                                            )}
+                                        {/* Icon in refined circular container */}
+                                        <motion.div
+                                            animate={{ y: [0, -6, 0] }}
+                                            transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: i * 0.8 }}
+                                            className="mb-6 sm:mb-8"
                                         >
-                                            <motion.span 
-                                                variants={{
-                                                    hidden: { opacity: 0, y: 50 },
-                                                    show: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" } }
-                                                }}
-                                                className="text-copper/40 text-4xl lg:text-6xl font-black font-heading tracking-tighter transition-colors duration-500 group-hover:text-copper"
-                                            >
-                                                0{i + 1}
-                                            </motion.span>
-                                            <h3 className="text-5xl sm:text-6xl lg:text-8xl font-heading font-black text-charcoal uppercase tracking-tighter leading-[0.9] cursor-default flex flex-wrap gap-x-4">
-                                                {badge.title.split(' ').map((word, wIdx) => (
-                                                  <div key={wIdx} className="overflow-hidden">
-                                                    <motion.span 
-                                                        variants={{
-                                                            hidden: { opacity: 0, y: 100 },
-                                                            show: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } }
-                                                        }}
-                                                        className="block transition-transform duration-500 group-hover:translate-x-4"
+                                            <div className="inline-flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-forest/[0.04] border border-charcoal/[0.06] group-hover:bg-copper/10 group-hover:border-copper/25 group-hover:shadow-[0_0_20px_rgba(184,115,51,0.1)] transition-all duration-500">
+                                                <Icon className="h-5 w-5 sm:h-6 sm:w-6 text-charcoal/30 group-hover:text-copper transition-colors duration-500" strokeWidth={1.5} />
+                                            </div>
+                                        </motion.div>
+
+                                        {/* Title */}
+                                        <h3 className="text-xl sm:text-2xl lg:text-3xl font-heading font-black text-charcoal uppercase tracking-tight leading-[1] mb-3 sm:mb-4">
+                                            {badge.title.split(' ').map((word, wIdx) => (
+                                                <div key={wIdx} className="overflow-hidden">
+                                                    <motion.span
+                                                        initial={{ y: 50, opacity: 0 }}
+                                                        whileInView={{ y: 0, opacity: 1 }}
+                                                        viewport={{ once: true }}
+                                                        transition={{ duration: 0.6, delay: i * 0.12 + wIdx * 0.06, ease: [0.16, 1, 0.3, 1] }}
+                                                        className="block"
                                                     >
                                                         {word}
                                                     </motion.span>
-                                                  </div>
-                                                ))}
-                                            </h3>
-                                        </div>
-                                        <div className="overflow-hidden">
-                                            <motion.p
-                                                variants={{
-                                                    hidden: { opacity: 0, y: 50 },
-                                                    show: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" } }
-                                                }}
-                                                className={cn(
-                                                    "text-xl sm:text-2xl lg:text-4xl text-charcoal/40 leading-[1.3] font-serif italic max-w-md lg:max-w-2xl transition-colors duration-500 group-hover:text-charcoal/80",
-                                                    !isEven && "lg:ml-auto"
-                                                )}
-                                            >
-                                                "{badge.description}"
-                                            </motion.p>
-                                        </div>
+                                                </div>
+                                            ))}
+                                        </h3>
+
+                                        {/* Thin copper separator */}
+                                        <motion.div
+                                            initial={{ scaleX: 0 }}
+                                            whileInView={{ scaleX: 1 }}
+                                            viewport={{ once: true }}
+                                            transition={{ duration: 0.8, delay: i * 0.15 + 0.3, ease: [0.16, 1, 0.3, 1] }}
+                                            className="w-8 sm:w-10 h-[2px] bg-copper/40 mb-4 sm:mb-5 origin-left group-hover:bg-copper transition-colors duration-500"
+                                        />
+
+                                        {/* Description */}
+                                        <motion.p
+                                            initial={{ opacity: 0 }}
+                                            whileInView={{ opacity: 1 }}
+                                            viewport={{ once: true }}
+                                            transition={{ duration: 0.6, delay: i * 0.12 + 0.3 }}
+                                            className="text-sm sm:text-base lg:text-lg text-charcoal/40 leading-relaxed font-medium max-w-[280px] transition-colors duration-500 group-hover:text-charcoal/65"
+                                        >
+                                            {badge.description}
+                                        </motion.p>
                                     </div>
                                 </motion.div>
                             );
