@@ -17,22 +17,23 @@ interface GarageItem {
 }
 
 const garages: GarageItem[] = [
-  // Standard Style
-  { id: "g1", src: "/garage_1.jpg",  label: "Tan Standard",       style: "Standard", color: "Tan",   door: "Open Bay" },
-  { id: "g2", src: "/garage_2.jpg",  label: "Cream Classic",      style: "Standard", color: "Cream", door: "Open Bay" },
-  { id: "g3", src: "/garage_3.jpg",  label: "Sage Green",         style: "Standard", color: "Green", door: "Panel"   },
-  { id: "g4", src: "/garage_4.jpg",  label: "Storm Gray",         style: "Standard", color: "Gray",  door: "Panel"   },
-  { id: "g5", src: "/garage_5.jpg",  label: "Navy Blue",          style: "Standard", color: "Blue",  door: "Panel"   },
-  { id: "g8", src: "/white_Garage.png", label: "White Standard",  style: "Standard", color: "White", door: "Panel"   },
-  { id: "g7", src: "/garage_7.jpg",  label: "Beige Double-Wide",  style: "Standard", color: "Beige", door: "Panel"   },
-  // Cape Cod Style
-  { id: "g9", src: "/Tan-Cape-Cod-style .jpg", label: "Tan Cape Cod", style: "Cape Cod", color: "Tan", door: "Open Bay" },
-  { id: "g10", src: "/CreamColorCapeCod .jpg", label: "Cream Cape Cod", style: "Cape Cod", color: "Cream", door: "Panel" },
-  { id: "g11", src: "/Green-Cape .jpg", label: "Green Cape Cod", style: "Cape Cod", color: "Green", door: "Open Bay" },
-  { id: "g12", src: "/Gray-Cape .jpg", label: "Gray Cape Cod", style: "Cape Cod", color: "Gray", door: "Panel" },
-  { id: "g13", src: "/Blue-Cape .jpeg", label: "Blue Cape Cod", style: "Cape Cod", color: "Blue", door: "Open Bay" },
-  { id: "g6", src: "/garage_6.jpg",  label: "White Cape Cod",     style: "Cape Cod", color: "White", door: "Open Bay"},
-  { id: "g14", src: "/Beige-Cape .jpg", label: "Beige Cape Cod", style: "Cape Cod", color: "Beige", door: "Panel" },
+  // Detached Style
+  { id: "g1", src: "/garage_1.jpg",  label: "Tan Detached",       style: "Detached", color: "Tan",   door: "Open Bay" },
+  { id: "g2", src: "/garage_2.jpg",  label: "Cream Classic",      style: "Detached", color: "Cream", door: "Open Bay" },
+  { id: "g3", src: "/garage_3.jpg",  label: "Sage Green",         style: "Detached", color: "Green", door: "Panel"   },
+  { id: "g4", src: "/garage_4.jpg",  label: "Storm Gray",         style: "Detached", color: "Gray",  door: "Panel"   },
+  { id: "g5", src: "/garage_5.jpg",  label: "Navy Blue",          style: "Detached", color: "Blue",  door: "Panel"   },
+  { id: "g8", src: "/white_Garage.png", label: "White Detached",  style: "Detached", color: "White", door: "Panel"   },
+  { id: "g7", src: "/garage_7.jpg",  label: "Beige Double-Wide",  style: "Detached", color: "Beige", door: "Panel"   },
+  // Attached Style
+  { id: "g9", src: "/Tan-Cape-Cod-style .jpg", label: "Tan Attached", style: "Attached", color: "Tan", door: "Open Bay" },
+  { id: "g10", src: "/CreamColorCapeCod .jpg", label: "Cream Attached", style: "Attached", color: "Cream", door: "Panel" },
+  { id: "g11", src: "/Green-Cape .jpg", label: "Green Attached", style: "Attached", color: "Green", door: "Open Bay" },
+  { id: "g12", src: "/Gray-Cape .jpg", label: "Gray Attached", style: "Attached", color: "Gray", door: "Panel" },
+  { id: "g13", src: "/Blue-Cape .jpeg", label: "Blue Attached", style: "Attached", color: "Blue", door: "Open Bay" },
+  // Post frames garage Style
+  { id: "g6", src: "/garage_6.jpg",  label: "White Post Frame",     style: "Post frames garage", color: "White", door: "Open Bay"},
+  { id: "g14", src: "/Beige-Cape .jpg", label: "Beige Post Frame", style: "Post frames garage", color: "Beige", door: "Panel" },
 ];
 
 const colorSwatches: Record<string, string> = {
@@ -126,7 +127,18 @@ export default function VisualizerSection() {
             animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
             exit={{ opacity: 0, scale: 0.95, filter: "blur(10px)" }}
             transition={{ duration: 0.6, ease: "easeOut" }}
-            className="absolute inset-0"
+            className="absolute inset-0 touch-pan-y"
+            drag="x"
+            dragConstraints={{ left: 0, right: 0 }}
+            dragElastic={0.2}
+            onDragEnd={(e, { offset, velocity }) => {
+              const swipe = Math.abs(offset.x) * velocity.x;
+              if (swipe < -1000) {
+                handleNext();
+              } else if (swipe > 1000) {
+                handlePrev();
+              }
+            }}
           >
             {hero ? (
               <Image
@@ -134,8 +146,9 @@ export default function VisualizerSection() {
                 alt={hero.label}
                 fill
                 priority
-                className="object-cover opacity-90 lg:opacity-80 lg:mix-blend-screen"
+                className="object-cover opacity-90 lg:opacity-80 lg:mix-blend-screen pointer-events-none"
                 sizes="100vw"
+                draggable={false}
               />
             ) : (
               <div className="absolute inset-0 bg-charcoal flex items-center justify-center">
@@ -149,6 +162,7 @@ export default function VisualizerSection() {
         <div className="hidden lg:block absolute inset-0 bg-[radial-gradient(ellipse_at_center,_transparent_0%,_#050505_120%)] pointer-events-none" />
         <div className="absolute inset-x-0 top-0 h-32 lg:h-48 bg-gradient-to-b from-black/80 to-transparent pointer-events-none" />
         <div className="absolute inset-x-0 bottom-0 h-32 lg:h-64 bg-gradient-to-t from-charcoal via-charcoal/50 lg:from-black lg:via-black/80 to-transparent pointer-events-none" />
+        
       </div>
 
       {/* ── UI Layer ── */}
@@ -175,19 +189,7 @@ export default function VisualizerSection() {
         </motion.div>
 
         {/* Mobile spacer to reveal image between header and controls */}
-        <div className="flex-grow min-h-[15svh] lg:min-h-0 flex items-center justify-between w-full pointer-events-none my-4 lg:my-8 px-4 sm:px-6 lg:px-8">
-            {/* Arrows */}
-            {filtered.length > 1 && (
-              <>
-                <button onClick={handlePrev} className="pointer-events-auto p-3 lg:p-4 rounded-full bg-black/40 border border-white/10 text-white hover:bg-copper hover:border-copper transition-all backdrop-blur-md group shadow-lg">
-                  <ChevronLeft className="w-5 h-5 lg:w-8 lg:h-8 group-hover:-translate-x-1 transition-transform" />
-                </button>
-                <button onClick={handleNext} className="pointer-events-auto p-3 lg:p-4 rounded-full bg-black/40 border border-white/10 text-white hover:bg-copper hover:border-copper transition-all backdrop-blur-md group shadow-lg">
-                  <ChevronRight className="w-5 h-5 lg:w-8 lg:h-8 group-hover:translate-x-1 transition-transform" />
-                </button>
-              </>
-            )}
-        </div>
+        <div className="flex-grow min-h-[15svh] lg:min-h-0 w-full pointer-events-none my-4 lg:my-8" />
 
         {/* Floating Controls Panel */}
         <motion.div 
@@ -237,12 +239,48 @@ export default function VisualizerSection() {
                 
                 {/* Style */}
                 <div className="space-y-3">
-                  <div className="text-[10px] font-bold text-white/40 tracking-[0.2em] uppercase">Architecture Style</div>
+                  <div className="text-[10px] font-bold text-white/40 tracking-[0.2em] uppercase">Type of Garage</div>
                   <div className="flex flex-wrap gap-2 sm:gap-3">
-                    {["All", "Standard", "Cape Cod"].map((s) => (
+                    {["All", "Detached", "Attached", "Post frames garage"].map((s) => (
                       <ConfigPill key={s} label={s} active={activeStyle === s} onClick={() => setActiveStyle(s)} />
                     ))}
                   </div>
+                  {/* Dynamic Info Text based on Client's Examples */}
+                  <AnimatePresence mode="wait">
+                    {activeStyle === "Detached" && (
+                      <motion.p 
+                        key="detached"
+                        initial={{ opacity: 0, height: 0, marginTop: 0 }} 
+                        animate={{ opacity: 1, height: "auto", marginTop: "8px" }} 
+                        exit={{ opacity: 0, height: 0, marginTop: 0 }} 
+                        className="text-xs text-white/50 font-medium leading-relaxed max-w-xl overflow-hidden"
+                      >
+                        A majority of garages are detached from the home. If your garage is in disrepair, leaning, has a cracked foundation, is damaged from weather or your house simply doesn't have a garage, we're here to help!
+                      </motion.p>
+                    )}
+                    {activeStyle === "Attached" && (
+                      <motion.p 
+                        key="attached"
+                        initial={{ opacity: 0, height: 0, marginTop: 0 }} 
+                        animate={{ opacity: 1, height: "auto", marginTop: "8px" }} 
+                        exit={{ opacity: 0, height: 0, marginTop: 0 }} 
+                        className="text-xs text-white/50 font-medium leading-relaxed max-w-xl overflow-hidden"
+                      >
+                        Often times the space for a detached garage isn't available and attaching the garage to your home is preferred... the good news is we can do that too!
+                      </motion.p>
+                    )}
+                    {activeStyle === "Post frames garage" && (
+                      <motion.p 
+                        key="post"
+                        initial={{ opacity: 0, height: 0, marginTop: 0 }} 
+                        animate={{ opacity: 1, height: "auto", marginTop: "8px" }} 
+                        exit={{ opacity: 0, height: 0, marginTop: 0 }} 
+                        className="text-xs text-white/50 font-medium leading-relaxed max-w-xl overflow-hidden"
+                      >
+                        Post Frame garages tend to be more economical for larger structures due to the exclusion of a traditional foundation. If you're interested in having a post frame garage built on your property, let us know!
+                      </motion.p>
+                    )}
+                  </AnimatePresence>
                 </div>
 
                 {/* Color */}
@@ -261,8 +299,32 @@ export default function VisualizerSection() {
             </div>
           </div>
         </motion.div>
-
       </div>
+
+      {/* ── Arrows Layer (Always on top of everything) ── */}
+      <div className="absolute inset-0 z-50 pointer-events-none">
+        <div className="sticky top-[27.5svh] lg:top-1/2 w-full flex justify-between px-4 sm:px-6 lg:px-12 pointer-events-none -translate-y-1/2">
+          {filtered.length > 1 && (
+            <>
+              <button 
+                onClick={handlePrev} 
+                className="pointer-events-auto flex items-center justify-center w-12 h-12 lg:w-16 lg:h-16 rounded-full bg-[#202225] text-white hover:bg-copper transition-all shadow-[0_8px_32px_rgba(0,0,0,0.5)] border border-white/10 group"
+                aria-label="Previous Garage"
+              >
+                <ChevronLeft className="w-6 h-6 lg:w-8 lg:h-8 group-hover:-translate-x-0.5 transition-transform" strokeWidth={2.5} />
+              </button>
+              <button 
+                onClick={handleNext} 
+                className="pointer-events-auto flex items-center justify-center w-12 h-12 lg:w-16 lg:h-16 rounded-full bg-[#202225] text-white hover:bg-copper transition-all shadow-[0_8px_32px_rgba(0,0,0,0.5)] border border-white/10 group"
+                aria-label="Next Garage"
+              >
+                <ChevronRight className="w-6 h-6 lg:w-8 lg:h-8 group-hover:translate-x-0.5 transition-transform" strokeWidth={2.5} />
+              </button>
+            </>
+          )}
+        </div>
+      </div>
+
     </section>
   );
 }

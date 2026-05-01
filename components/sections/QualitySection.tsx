@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Shield, Award, BadgeCheck, ImageIcon } from "lucide-react";
+import Image from "next/image";
+import { Shield, Award, BadgeCheck, ImageIcon, ShieldCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
 import BeforeAfterSlider from "@/components/visualizer/BeforeAfterSlider";
 
@@ -11,19 +12,20 @@ const badges = [
     {
         icon: Shield,
         title: "10-Year Warranty",
-        description:
-            "Every structure is backed by a full decade of structural protection.",
+        description: "Every structure is backed by a full decade of structural protection.",
+        image: "/ultra_trust_warranty_1777658047893.png"
     },
     {
         icon: Award,
         title: "Amish Quality",
         description: "Handcrafted with generations of architectural expertise.",
+        image: "/ultra_trust_builder_working_1777658335109.png"
     },
     {
-        icon: BadgeCheck,
+        icon: ShieldCheck,
         title: "Licensed & Insured",
-        description:
-            "Complete liability coverage for your total peace of mind.",
+        description: "Complete liability coverage for your total peace of mind.",
+        image: "/ultra_trust_result_1777658079235.png"
     },
 ];
 
@@ -40,18 +42,18 @@ interface Project {
 const projects: Project[] = [
     {
         id: 1,
-        title: "Backyard Transformation",
-        tag: "24×24 Standard Garage",
-        before: "/before-after/before_1.png",
-        after: "/before-after/after_1.png",
+        title: "Chicago Suburb Build",
+        tag: "20×20 Cape Cod Style",
+        before: "/before-after/broken_chicago.png",
+        after: "/before-after/chicago_suburb_after.png",
         available: true,
     },
     {
         id: 2,
-        title: "Chicago Suburb Build",
-        tag: "20×20 Cape Cod Style",
-        before: "/before-after/chicago_suburb_before.png",
-        after: "/before-after/chicago_suburb_after.png",
+        title: "Backyard Transformation",
+        tag: "24×24 Standard Garage",
+        before: "/before-after/before_1.png",
+        after: "/before-after/after_1.png",
         available: true,
     },
     {
@@ -81,7 +83,7 @@ export default function QualitySection() {
                 {/* ── Top Section: Badges (COMPACT SINGLE-VIEWPORT) ── */}
                 <div className="mb-24 lg:mb-32">
                     {/* Header Row */}
-                    <motion.div 
+                    <motion.div
                         initial={{ opacity: 0, y: 40 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true, margin: "50px" }}
@@ -89,34 +91,45 @@ export default function QualitySection() {
                         className="mb-16 lg:mb-20 relative z-20 flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6"
                     >
                         <div>
-                            <motion.span 
+                            <motion.span
                                 initial={{ opacity: 0, x: -30 }}
                                 whileInView={{ opacity: 1, x: 0 }}
-                                transition={{ duration: 0.8, delay: 0.1, ease: "easeOut" }}
+                                transition={{
+                                    duration: 0.8,
+                                    delay: 0.1,
+                                    ease: "easeOut",
+                                }}
                                 className="inline-block text-copper text-xs font-bold tracking-[0.3em] uppercase mb-4"
                             >
                                 The Amish Standard
                             </motion.span>
                             <h2 className="text-6xl md:text-7xl lg:text-8xl font-heading font-black text-charcoal tracking-tighter leading-[0.85] uppercase">
-                                <motion.span 
+                                <motion.span
                                     initial={{ opacity: 0, y: 60 }}
                                     whileInView={{ opacity: 1, y: 0 }}
-                                    transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                                    transition={{
+                                        duration: 0.8,
+                                        ease: [0.16, 1, 0.3, 1],
+                                    }}
                                     className="inline-block"
                                 >
                                     Built To{" "}
                                 </motion.span>
-                                <motion.span 
+                                <motion.span
                                     initial={{ opacity: 0, y: 60 }}
                                     whileInView={{ opacity: 1, y: 0 }}
-                                    transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+                                    transition={{
+                                        duration: 0.8,
+                                        delay: 0.1,
+                                        ease: [0.16, 1, 0.3, 1],
+                                    }}
                                     className="inline-block text-copper italic font-serif normal-case font-light"
                                 >
                                     Outlast.
                                 </motion.span>
                             </h2>
                         </div>
-                        <motion.p 
+                        <motion.p
                             initial={{ opacity: 0 }}
                             whileInView={{ opacity: 1 }}
                             transition={{ duration: 0.8, delay: 0.3 }}
@@ -126,76 +139,53 @@ export default function QualitySection() {
                         </motion.p>
                     </motion.div>
 
-                    {/* Badges Row — 3 columns, one viewport */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-0 border-t border-charcoal/10">
+                    {/* Badges Row — Premium Architectural Cards */}
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
                         {badges.map((badge, i) => {
                             const Icon = badge.icon;
                             return (
                                 <motion.div
                                     key={badge.title}
-                                    initial={{ opacity: 0, y: 40 }}
+                                    initial={{ opacity: 0, y: 30 }}
                                     whileInView={{ opacity: 1, y: 0 }}
-                                    viewport={{ once: true, margin: "50px" }}
-                                    transition={{ duration: 0.7, delay: i * 0.15, ease: [0.16, 1, 0.3, 1] }}
-                                    className="group relative overflow-hidden border-b md:border-b-0 md:border-r last:border-r-0 border-charcoal/10 py-12 md:py-16 px-6 md:px-10 cursor-default"
+                                    viewport={{ once: true }}
+                                    transition={{ duration: 0.8, delay: i * 0.15 }}
+                                    className="group relative h-[450px] lg:h-[550px] rounded-3xl overflow-hidden shadow-2xl shadow-charcoal/10"
                                 >
-                                    {/* Grain / Noise Texture — handcrafted paper feel */}
-                                    <div className="absolute inset-0 bg-noise opacity-[0.06] mix-blend-multiply pointer-events-none" />
+                                    {/* Background Image with Hover Zoom */}
+                                    <Image
+                                        src={badge.image}
+                                        alt={badge.title}
+                                        fill
+                                        className="object-cover transition-transform duration-700 group-hover:scale-110"
+                                    />
                                     
-                                    {/* Warm radial glow on hover — like sunlight on natural wood */}
-                                    <div className="absolute inset-0 bg-radial-[at_30%_30%] from-copper/[0.04] via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
-
-                                    {/* Bottom copper accent — grows on hover */}
-                                    <div className="absolute bottom-0 left-0 w-full h-[2px] bg-gradient-to-r from-copper/60 via-copper to-copper/60 scale-x-0 group-hover:scale-x-100 origin-center transition-transform duration-600 ease-out" />
-
-                                    <div className="relative z-10">
-                                        {/* Icon in refined circular container */}
-                                        <motion.div
-                                            animate={{ y: [0, -6, 0] }}
-                                            transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: i * 0.8 }}
-                                            className="mb-6 sm:mb-8"
-                                        >
-                                            <div className="inline-flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-forest/[0.04] border border-charcoal/[0.06] group-hover:bg-copper/10 group-hover:border-copper/25 group-hover:shadow-[0_0_20px_rgba(184,115,51,0.1)] transition-all duration-500">
-                                                <Icon className="h-5 w-5 sm:h-6 sm:w-6 text-charcoal/30 group-hover:text-copper transition-colors duration-500" strokeWidth={1.5} />
+                                    {/* Cinematic Overlay */}
+                                    <div className="absolute inset-0 bg-gradient-to-t from-charcoal via-charcoal/20 to-transparent opacity-80 group-hover:opacity-60 transition-opacity duration-500" />
+                                    
+                                    {/* Glass Content Overlay */}
+                                    <div className="absolute bottom-6 left-6 right-6 p-6 sm:p-8 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 transform transition-all duration-500 group-hover:-translate-y-2">
+                                        <div className="flex items-center gap-4 mb-4">
+                                            <div className="w-10 h-10 rounded-full bg-copper flex items-center justify-center shadow-lg shadow-copper/20">
+                                                <Icon className="w-5 h-5 text-white" strokeWidth={2.5} />
                                             </div>
-                                        </motion.div>
-
-                                        {/* Title */}
-                                        <h3 className="text-xl sm:text-2xl lg:text-3xl font-heading font-black text-charcoal uppercase tracking-tight leading-[1] mb-3 sm:mb-4">
-                                            {badge.title.split(' ').map((word, wIdx) => (
-                                                <div key={wIdx} className="overflow-hidden">
-                                                    <motion.span
-                                                        initial={{ y: 50, opacity: 0 }}
-                                                        whileInView={{ y: 0, opacity: 1 }}
-                                                        viewport={{ once: true }}
-                                                        transition={{ duration: 0.6, delay: i * 0.12 + wIdx * 0.06, ease: [0.16, 1, 0.3, 1] }}
-                                                        className="block"
-                                                    >
-                                                        {word}
-                                                    </motion.span>
-                                                </div>
-                                            ))}
+                                            <div className="h-px flex-grow bg-white/20" />
+                                        </div>
+                                        
+                                        <h3 className="text-2xl lg:text-3xl font-heading font-black text-white uppercase tracking-tight leading-none mb-3">
+                                            {badge.title}
                                         </h3>
-
-                                        {/* Thin copper separator */}
-                                        <motion.div
-                                            initial={{ scaleX: 0 }}
-                                            whileInView={{ scaleX: 1 }}
-                                            viewport={{ once: true }}
-                                            transition={{ duration: 0.8, delay: i * 0.15 + 0.3, ease: [0.16, 1, 0.3, 1] }}
-                                            className="w-8 sm:w-10 h-[2px] bg-copper/40 mb-4 sm:mb-5 origin-left group-hover:bg-copper transition-colors duration-500"
-                                        />
-
-                                        {/* Description */}
-                                        <motion.p
-                                            initial={{ opacity: 0 }}
-                                            whileInView={{ opacity: 1 }}
-                                            viewport={{ once: true }}
-                                            transition={{ duration: 0.6, delay: i * 0.12 + 0.3 }}
-                                            className="text-sm sm:text-base lg:text-lg text-charcoal/40 leading-relaxed font-medium max-w-[280px] transition-colors duration-500 group-hover:text-charcoal/65"
-                                        >
+                                        
+                                        <p className="text-sm lg:text-base text-white/80 font-medium leading-relaxed">
                                             {badge.description}
-                                        </motion.p>
+                                        </p>
+                                    </div>
+
+                                    {/* Hover Indicator */}
+                                    <div className="absolute top-6 right-6 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                                        <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-md border border-white/30 flex items-center justify-center">
+                                            <Icon className="w-5 h-5 text-white animate-pulse" />
+                                        </div>
                                     </div>
                                 </motion.div>
                             );
