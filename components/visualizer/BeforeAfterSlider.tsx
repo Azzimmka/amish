@@ -11,6 +11,7 @@ interface BeforeAfterSliderProps {
   afterSrc: string;
   afterAlt: string;
   className?: string;
+  controlledPos?: number;
 }
 
 export default function BeforeAfterSlider({
@@ -19,10 +20,18 @@ export default function BeforeAfterSlider({
   afterSrc,
   afterAlt,
   className,
+  controlledPos,
 }: BeforeAfterSliderProps) {
   const [sliderPos, setSliderPos] = useState(50);
   const [isDragging, setIsDragging] = useState(false);
   const [hasInteracted, setHasInteracted] = useState(false);
+
+  // Sync with controlledPos if provided
+  useEffect(() => {
+    if (controlledPos !== undefined) {
+      setSliderPos(controlledPos);
+    }
+  }, [controlledPos]);
   const containerRef = useRef<HTMLDivElement>(null);
 
   // Intro animation: sweep from 100 → 50 on mount
@@ -86,8 +95,10 @@ export default function BeforeAfterSlider({
     <div
       ref={containerRef}
       className={cn(
-        "relative w-full aspect-[16/9] overflow-hidden rounded-2xl select-none shadow-2xl",
+        "relative overflow-hidden select-none",
+        !className?.includes("aspect-") && !className?.includes("h-") && "aspect-[16/9]",
         isDragging ? "cursor-ew-resize" : "cursor-ew-resize",
+        "rounded-2xl shadow-2xl",
         className
       )}
       onMouseDown={(e) => { e.preventDefault(); startDrag(e.clientX); }}
