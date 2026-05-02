@@ -107,10 +107,10 @@ function TimelineItem({ step, index, scrollYProgress }: { step: any; index: numb
         return v >= start && v < end;
     };
 
-    const opacity = useTransform(scrollYProgress, (v) => (isActive(v) ? 1 : 0.25));
-    const x = useTransform(scrollYProgress, (v) => (isActive(v) ? 12 : 0)); 
-    const scale = useTransform(scrollYProgress, (v) => (isActive(v) ? 1.5 : 1));
-    const bg = useTransform(scrollYProgress, (v) => (isActive(v) ? "#b87333" : "#ffffff20"));
+    const opacity = useTransform(scrollYProgress, (v: number) => (isActive(v) ? 1 : 0.25));
+    const x = useTransform(scrollYProgress, (v: number) => (isActive(v) ? 12 : 0)); 
+    const scale = useTransform(scrollYProgress, (v: number) => (isActive(v) ? 1.5 : 1));
+    const bg = useTransform(scrollYProgress, (v: number) => (isActive(v) ? "#b87333" : "#ffffff20"));
 
     return (
         <motion.div
