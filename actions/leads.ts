@@ -5,8 +5,6 @@ import { Resend } from "resend";
 import { render } from "@react-email/components";
 import { QuoteTemplate } from "@/emails/quote-template";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 const quoteSchema = z.object({
   fullName: z
     .string()
@@ -36,6 +34,8 @@ export async function submitQuote(
   _prevState: QuoteFormState,
   formData: FormData
 ): Promise<QuoteFormState> {
+  const resendApiKey = process.env.RESEND_API_KEY;
+
   const rawData = {
     fullName: formData.get("fullName") || "",
     phone: formData.get("phone") || "",
@@ -54,7 +54,15 @@ export async function submitQuote(
     };
   }
 
+  if (!resendApiKey) {
+    return {
+      success: false,
+      message: "Email delivery is not configured yet. Add RESEND_API_KEY on the server and try again.",
+    };
+  }
+
   try {
+    const resend = new Resend(resendApiKey);
     const emailHtml = await render(QuoteTemplate({
       ...validated.data,
       selectedGarageId: validated.data.selectedGarageId ?? undefined,
