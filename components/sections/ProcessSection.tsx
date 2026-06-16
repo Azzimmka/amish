@@ -1,7 +1,8 @@
 "use client";
 
 import { useRef } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import type { ComponentType } from "react";
+import { motion, useScroll, useTransform, type MotionValue } from "framer-motion";
 import { Trash2, Ruler, Hammer, Zap } from "lucide-react";
 
 const steps = [
@@ -93,14 +94,21 @@ export default function ProcessSection() {
     );
 }
 
+interface ProcessStep {
+    id: number;
+    icon: ComponentType<{ className?: string }>;
+    title: string;
+    description: string;
+}
+
 function ProcessCard({
     step,
     index,
     scrollYProgress,
 }: {
-    step: any;
+    step: ProcessStep;
     index: number;
-    scrollYProgress: any;
+    scrollYProgress: MotionValue<number>;
 }) {
     const Icon = step.icon;
 

@@ -22,17 +22,11 @@ export default function BeforeAfterSlider({
   className,
   controlledPos,
 }: BeforeAfterSliderProps) {
-  const [sliderPos, setSliderPos] = useState(50);
+  const [manualSliderPos, setManualSliderPos] = useState(controlledPos ?? 50);
   const [isDragging, setIsDragging] = useState(false);
   const [hasInteracted, setHasInteracted] = useState(false);
-
-  // Sync with controlledPos if provided
-  useEffect(() => {
-    if (controlledPos !== undefined) {
-      setSliderPos(controlledPos);
-    }
-  }, [controlledPos]);
   const containerRef = useRef<HTMLDivElement>(null);
+  const sliderPos = controlledPos ?? manualSliderPos;
 
   // Intro animation: sweep from 100 → 50 on mount
   useEffect(() => {
@@ -47,7 +41,7 @@ export default function BeforeAfterSlider({
       const progress = Math.min(elapsed / duration, 1);
       // Ease out cubic
       const eased = 1 - Math.pow(1 - progress, 3);
-      setSliderPos(from + (to - from) * eased);
+      setManualSliderPos(from + (to - from) * eased);
       if (progress < 1) requestAnimationFrame(step);
     };
 
@@ -60,7 +54,7 @@ export default function BeforeAfterSlider({
     const rect = containerRef.current.getBoundingClientRect();
     const x = clientX - rect.left;
     const pct = Math.min(100, Math.max(0, (x / rect.width) * 100));
-    setSliderPos(pct);
+    setManualSliderPos(pct);
     if (!hasInteracted) setHasInteracted(true);
   }, [hasInteracted]);
 

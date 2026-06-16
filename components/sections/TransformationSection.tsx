@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState, useEffect } from "react";
-import { motion, useScroll, useTransform, useSpring } from "framer-motion";
+import { motion, useScroll, useTransform, useSpring, type MotionValue } from "framer-motion";
 import BeforeAfterSlider from "@/components/visualizer/BeforeAfterSlider";
 
 const steps = [
@@ -98,7 +98,12 @@ export default function TransformationSection() {
     );
 }
 
-function TimelineItem({ step, index, scrollYProgress }: { step: any; index: number; scrollYProgress: any }) {
+interface TimelineStep {
+    id: number;
+    title: string;
+}
+
+function TimelineItem({ step, index, scrollYProgress }: { step: TimelineStep; index: number; scrollYProgress: MotionValue<number> }) {
     const start = index * 0.25;
     const end = (index + 1) * 0.25;
     

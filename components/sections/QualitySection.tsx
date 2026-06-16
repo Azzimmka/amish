@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
-import { Shield, Award, BadgeCheck, ImageIcon, ShieldCheck } from "lucide-react";
+import { Shield, Award, ShieldCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
 import BeforeAfterSlider from "@/components/visualizer/BeforeAfterSlider";
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "framer-motion";
 import { Phone, Menu, X } from "lucide-react";
@@ -17,7 +17,6 @@ const navLinks = [
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [hoveredLink, setHoveredLink] = useState<string | null>(null);
-  const [hidden, setHidden] = useState(false);
   const [isAtTop, setIsAtTop] = useState(true);
 
   const { scrollY } = useScroll();

@@ -1,6 +1,4 @@
 import { ImageResponse } from 'next/og';
-import { readFileSync } from 'fs';
-import { join } from 'path';
 
 export const alt = 'Amish Built Garages';
 export const size = { width: 1200, height: 630 };

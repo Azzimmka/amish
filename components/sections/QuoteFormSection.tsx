@@ -3,7 +3,7 @@
 import { useActionState } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { Send, CheckCircle2, ArrowRight } from "lucide-react";
+import { CheckCircle2, ArrowRight } from "lucide-react";
 import { submitQuote, type QuoteFormState } from "@/actions/leads";
 import { cn } from "@/lib/utils";
 
@@ -99,7 +99,7 @@ export default function QuoteFormSection() {
                 </p>
               </div>
             ) : (
-              <form action={formAction} className="space-y-0">
+              <form id="quote-form" action={formAction} className="space-y-0">
                 
                 <div className="mb-16">
                   <h3 className="text-4xl sm:text-5xl font-heading font-black text-forest uppercase tracking-tighter leading-none mb-4">

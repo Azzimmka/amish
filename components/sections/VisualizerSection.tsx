@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, Settings2, ShieldCheck, ChevronLeft, ChevronRight } from "lucide-react";
@@ -78,40 +78,33 @@ function ConfigPill({
 export default function VisualizerSection() {
   const [activeStyle, setActiveStyle] = useState("All");
   const [activeColor, setActiveColor] = useState("All");
-  const [activeDoor,  setActiveDoor]  = useState("All");
   const [heroId,      setHeroId]      = useState("g1");
 
   const filtered = garages.filter((g) => {
     if (activeStyle !== "All" && g.style !== activeStyle) return false;
     if (activeColor !== "All" && g.color !== activeColor) return false;
-    if (activeDoor  !== "All" && g.door  !== activeDoor)  return false;
     return true;
   });
 
-  // Keep hero valid when filters change
-  useEffect(() => {
-    if (!filtered.find((g) => g.id === heroId)) {
-      setHeroId(filtered[0]?.id ?? "g1");
-    }
-  }, [filtered, heroId]);
-
-  const hero = garages.find((g) => g.id === heroId) ?? garages[0];
+  const fallbackHeroId = filtered[0]?.id ?? garages[0].id;
+  const activeHeroId = filtered.find((g) => g.id === heroId)?.id ?? fallbackHeroId;
+  const hero = garages.find((g) => g.id === activeHeroId) ?? garages[0];
 
   const handleNext = () => {
-    const currentIndex = filtered.findIndex(g => g.id === heroId);
+    const currentIndex = filtered.findIndex(g => g.id === activeHeroId);
     if (currentIndex < filtered.length - 1) {
       setHeroId(filtered[currentIndex + 1].id);
     } else {
-      setHeroId(filtered[0].id); // loop
+      setHeroId(fallbackHeroId); // loop
     }
   };
 
   const handlePrev = () => {
-    const currentIndex = filtered.findIndex(g => g.id === heroId);
+    const currentIndex = filtered.findIndex(g => g.id === activeHeroId);
     if (currentIndex > 0) {
       setHeroId(filtered[currentIndex - 1].id);
     } else {
-      setHeroId(filtered[filtered.length - 1].id); // loop
+      setHeroId(filtered[filtered.length - 1]?.id ?? fallbackHeroId); // loop
     }
   };
 
@@ -167,6 +160,7 @@ export default function VisualizerSection() {
 
       {/* ── UI Layer ── */}
       <div className="relative z-10 flex flex-col lg:h-screen w-full mx-auto max-w-7xl pointer-events-none">
+        <input type="hidden" name="selectedGarageId" form="quote-form" value={activeHeroId} readOnly />
         
         {/* Mobile Spacer (pushes header down slightly if needed, but we want header at top) */}
         
@@ -255,7 +249,7 @@ export default function VisualizerSection() {
                         exit={{ opacity: 0, height: 0, marginTop: 0 }} 
                         className="text-xs text-white/50 font-medium leading-relaxed max-w-xl overflow-hidden"
                       >
-                        A majority of garages are detached from the home. If your garage is in disrepair, leaning, has a cracked foundation, is damaged from weather or your house simply doesn't have a garage, we're here to help!
+                        A majority of garages are detached from the home. If your garage is in disrepair, leaning, has a cracked foundation, is damaged from weather or your house simply does not have a garage, we are here to help!
                       </motion.p>
                     )}
                     {activeStyle === "Attached" && (
@@ -266,7 +260,7 @@ export default function VisualizerSection() {
                         exit={{ opacity: 0, height: 0, marginTop: 0 }} 
                         className="text-xs text-white/50 font-medium leading-relaxed max-w-xl overflow-hidden"
                       >
-                        Often times the space for a detached garage isn't available and attaching the garage to your home is preferred... the good news is we can do that too!
+                        Often times the space for a detached garage is not available and attaching the garage to your home is preferred... the good news is we can do that too!
                       </motion.p>
                     )}
                     {activeStyle === "Post frames garage" && (
@@ -277,7 +271,7 @@ export default function VisualizerSection() {
                         exit={{ opacity: 0, height: 0, marginTop: 0 }} 
                         className="text-xs text-white/50 font-medium leading-relaxed max-w-xl overflow-hidden"
                       >
-                        Post Frame garages tend to be more economical for larger structures due to the exclusion of a traditional foundation. If you're interested in having a post frame garage built on your property, let us know!
+                        Post Frame garages tend to be more economical for larger structures due to the exclusion of a traditional foundation. If you are interested in having a post frame garage built on your property, let us know!
                       </motion.p>
                     )}
                   </AnimatePresence>

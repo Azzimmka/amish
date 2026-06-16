@@ -2,8 +2,7 @@
 
 import Image from "next/image";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { ChevronRight, Phone, MapPin } from "lucide-react";
-import { siteConfig } from "@/config/site";
+import { ChevronRight, MapPin } from "lucide-react";
 import { useEffect, useState } from "react";
 
 // Smooth animated counter
